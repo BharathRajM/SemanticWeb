@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-
+# todo if-else for alt and hidden label -> keep them always to avoid missing results
 #import the CSV module for dealing with CSV files
 import csv
 
