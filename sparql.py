@@ -3,7 +3,8 @@ import Levenshtein
 import sys, json
 import requests
 
-
+# TODO too many triples -> find another solution or make queries at different times and save intermediate results
+# We can divide the skill file into two files
 
 def sparql_query(query, endpoint):
        '''
@@ -47,7 +48,7 @@ def eval_results(output, entity, threshold, dist_type):
 
        filter_results = []
        for binding in results['bindings']:
-              if string_sim(binding['prefLabel']['value'], entity, dist_type) <= threshold or string_sim(binding['altLabel']['value'], entity, dist_type) <= threshold:
+              if string_sim(binding['prefLabel']['value'], entity, dist_type) <= threshold or string_sim(binding['altLabel']['value'] or string_sim(binding['hiddenLabel']['value']) <= threshold, entity, dist_type) <= threshold:
                      filter_results.append(binding)
 
        return filter_results
@@ -56,6 +57,24 @@ def eval_results(output, entity, threshold, dist_type):
 
 # Example
 
+# query ttl file skill/occupetion
+x = """
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#> 
+PREFIX esco: <http://ec.europa.eu/esco/model#>      
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>   
+SELECT ?skill ?prefLabel ?altLabel ?hiddenLabel
+WHERE {     
+    ?skill skos:prefLabel ?prefLabel .
+    ?skill skos:altLabel ?altLabel .
+    ?skill skos:hiddenLabel ?hiddenLabel .
+    
+    
+}
+
+"""
+
+
+# query set of 3 ttl little files
 x = """
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#> 
 PREFIX esco: <http://ec.europa.eu/esco/model#>      
@@ -63,11 +82,10 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 SELECT ?skill ?prefLabel ?altLabel
 WHERE {     
     ?skill skos:prefLabel ?prefLabel .
-    ?skill skos:altLabel ?altLabel
-    FILTER langMatches(lang(?prefLabel),"en")
-    FILTER langMatches(lang(?altLabel),"en")
+    ?skill skos:altLabel ?altLabel .
+
 }
-LIMIT 10
+
 """
 
 # THIS SEEMS TO WORK!!!
