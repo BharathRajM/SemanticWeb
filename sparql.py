@@ -3,8 +3,6 @@ import Levenshtein
 import sys, json
 import requests
 
-# TODO too many triples -> find another solution or make queries at different times and save intermediate results
-# We can divide the skill file into two files
 
 def sparql_query(query, endpoint):
        '''
@@ -18,7 +16,7 @@ def sparql_query(query, endpoint):
        sparql.setQuery(query)
        sparql.setReturnFormat(JSON)
        output = sparql.query().convert()
-       print(output)
+       #print(output)
        return output
 
 
@@ -44,13 +42,13 @@ def eval_results(output, entity, threshold, dist_type):
        :return:
        '''
        results = output['results']
-       print(results)
+       #print(results)
 
        filter_results = []
        for binding in results['bindings']:
-              if string_sim(binding['prefLabel']['value'], entity, dist_type) <= threshold or string_sim(binding['altLabel']['value'] or string_sim(binding['hiddenLabel']['value']) <= threshold, entity, dist_type) <= threshold:
-                     filter_results.append(binding)
-
+              if string_sim(binding['prefLabel']['value'], entity, dist_type) <= threshold or \
+                      string_sim(binding['altLabel']['value'], entity, dist_type) <= threshold or \
+                      string_sim(binding['hiddenLabel']['value'], entity, dist_type) <= threshold: filter_results.append(binding)
        return filter_results
 
 
@@ -75,7 +73,7 @@ WHERE {
 
 
 # query set of 3 ttl little files
-x = """
+z = """
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#> 
 PREFIX esco: <http://ec.europa.eu/esco/model#>      
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>   
