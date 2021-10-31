@@ -150,6 +150,16 @@ file_x = open("skill_occupation.pickle", "wb")
 pickle.dump(output, file_x)
 file_x.close()'''
 
+'''output = sparql_query(x, "http://localhost:3030/ds")
+file_x1 = open("skill.pickle", "wb")
+pickle.dump(output, file_x1)
+file_x1.close()'''
+
+'''output = sparql_query(x, "http://localhost:3030/ds")
+file_x2 = open("occupation.pickle", "wb")
+pickle.dump(output, file_x2)
+file_x2.close()'''
+
 '''output = sparql_query(y, "http://localhost:3030/ds")
 file_y = open("skill_digital_language.pickle", "wb")
 pickle.dump(output, file_y)
@@ -158,24 +168,34 @@ file_y.close()'''
 
 # load pickle
 
-file_x = open("skill_occupation.pickle", "rb")
-skill = pickle.load(file_x)
-print(skill)
+'''file_x = open("skill_occupation.pickle", "rb")
+skill_occupation = pickle.load(file_x)
+print(skill_occupation)'''
 
-file_y = open("skill_digital_language.pickle", "rb")
+'''file_x1 = open("skill.pickle", "rb")
+skill = pickle.load(file_x1)
+print(skill)'''
+
+'''file_x2 = open("occupation.pickle", "rb")
+occupation = pickle.load(file_x2)
+print(occupation)'''
+
+'''file_y = open("skill_digital_language.pickle", "rb")
 skill_digital_language = pickle.load(file_y)
-print(skill_digital_language)
+print(skill_digital_language)'''
+
+
 
 
 # evaluate similarity
 
-res = eval_results(skill, "writing Punjabi", ">=", 0.7, "levenshtein", 1)
+'''res = eval_results(skill, "writing Punjabi", ">=", 0.7, "levenshtein", 1)
 print(res)
 print(len(res))
 
 res1 = eval_results(skill_digital_language, "writing Punjabi", ">=", 0.7, "levenshtein", 2)
 print(res1)
-print(len(res1))
+print(len(res1))'''
 
 
 
