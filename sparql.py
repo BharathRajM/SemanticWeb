@@ -76,29 +76,95 @@ def eval_results(output, entity, compare, threshold, dist_type, taxonomy_type):
        #print(results)
 
        filter_results = []
+       filter_uri = []
 
        if taxonomy_type == 1:
               if compare == ">=":
                      for binding in results['bindings']:
                             if string_sim(binding['prefLabel']['value'], entity, dist_type) >= threshold or \
                                     string_sim(binding['altLabel']['value'], entity, dist_type) >= threshold or \
-                                    string_sim(binding['hiddenLabel']['value'], entity, dist_type) >= threshold: filter_results.append(binding)
+                                    string_sim(binding['hiddenLabel']['value'], entity, dist_type) >= threshold:
+                                   filter_results.append(binding)
+                                   filter_uri.append(binding['skill']['value'])
               else:
                      for binding in results['bindings']:
                             if string_sim(binding['prefLabel']['value'], entity, dist_type) <= threshold or \
                                     string_sim(binding['altLabel']['value'], entity, dist_type) <= threshold or \
                                     string_sim(binding['hiddenLabel']['value'], entity,
-                                               dist_type) <= threshold: filter_results.append(binding)
+                                               dist_type) <= threshold:
+                                   filter_results.append(binding)
+                                   filter_uri.append(binding['skill']['value'])
        else: # taxonomy part with 3 different skills does not have hiddenLabel
               if compare == ">=":
                      for binding in results['bindings']:
                             if string_sim(binding['prefLabel']['value'], entity, dist_type) >= threshold or \
-                                    string_sim(binding['altLabel']['value'], entity, dist_type) >= threshold: filter_results.append(binding)
+                                    string_sim(binding['altLabel']['value'], entity, dist_type) >= threshold:
+                                   filter_results.append(binding)
+                                   filter_uri.append(binding['skill']['value'])
               else:
                      for binding in results['bindings']:
                             if string_sim(binding['prefLabel']['value'], entity, dist_type) <= threshold or \
-                                    string_sim(binding['altLabel']['value'], entity, dist_type) <= threshold: filter_results.append(binding)
-       return filter_results
+                                    string_sim(binding['altLabel']['value'], entity, dist_type) <= threshold:
+                                   filter_results.append(binding)
+                                   filter_uri.append(binding['skill']['value'])
+       return list(set(filter_uri)) # if needed we can use filter_results
+
+
+def eval_results_tot(output, list_entities, compare, threshold, dist_type, taxonomy_type): # maybe instead of list entities we have key-value(resume/job proposal: list entities)
+       '''
+       Given the output from the query, the list of retrieved entities, it finds the matches (uris without duplicates
+        for the entities inside the taxonomy using string similarity
+       :param output:
+       :param list_entities:
+       :param compare:
+       :param threshold:
+       :param dist_type:
+       :param taxonomy_type:
+       :return:
+       '''
+       matches = []
+       filter_uri = []
+       for e in list_entities:
+              filter_uri = eval_results(output, e, compare, threshold, dist_type, taxonomy_type)
+       matches = list(set(matches) | set(filter_uri)) # set not needed bcs already sets
+
+       return (matches, len(matches)) # list of matches and score -> score is 1 for each match -> total number of matches
+
+
+def score_plus(output, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_job):
+       '''
+       Given the output with essential and optional skills/occupations, the list of uris for resume's skills (output of
+       eval_results_tot), the list of uris for job proposal's skills (output of eval_results_tot), the list of uris for
+       job proposal's occupations (output of eval_results_tot on the type of job), it returns the score to sum to the
+       score given by the matching entities (+0.5 if essential skill for a skill/occupation, +0.25 if optional skill)
+       :param output_skills:
+       :param output_occupations:
+       :param list_uri_skills_resume:
+       :param list_uri_skills_job_proposal:
+       :param list_uri_occupations_job:
+       :return:
+       '''
+       score = 0
+       results = output['results']
+
+       for binding in results['bindings']:
+              for el in list_uri_skills_resume:
+                     if len(binding['essential']['value']) >= 33 and binding['essential']['value'][0:33] == 'http://data.europa.eu/esco/skill/':
+                            if el == binding['essential']['value'] and binding['essential']['value'] in list_uri_skills_job_proposal:
+                                   score += 0.5
+                            elif el == binding['optional']['value'] and binding['optional']['value'] in list_uri_skills_job_proposal:
+                                   score += 0.25
+
+       for binding in results['bindings']:
+              for el in list_uri_occupations_job:
+                     if len(binding['essential']['value']) >= 33 and binding['essential']['value'][0:38] == 'http://data.europa.eu/esco/occupation/':
+                            if el == binding['essential']['value'] and binding['essential']['value'] in list_uri_occupations_job:
+                                   score += 0.5
+                            elif el == binding['optional']['value'] and binding['optional']['value'] in list_uri_occupations_job:
+                                   score += 0.25
+
+
+
 
 
 
@@ -107,9 +173,12 @@ def eval_results(output, entity, compare, threshold, dist_type, taxonomy_type):
 
 # similerities
 
-print(edit_sim("python programming", "programmer"))
-print(levenshtein_sim("python programming", "programmer"))
-print(jaccard_index("python programming", "programmer"))
+str = 'http://data.europa.eu/esco/occuaption/ciao'
+print(str[0:38])
+print(len(str[0:38]))
+print(edit_sim("python programming", "pytho prog"))
+print(levenshtein_sim("python programming", "pytho prog"))
+print(jaccard_index("python programming", "pytho prog"))
 print(jaro.jaro_winkler_metric("python programming", "programmer"))
 
 
@@ -139,9 +208,34 @@ SELECT ?skill ?prefLabel ?altLabel
 WHERE {     
     ?skill skos:prefLabel ?prefLabel .
     ?skill skos:altLabel ?altLabel .
+    
+    FILTER (lang(?prefLabel) = 'en')
+    FILTER (lang(?altLabel) = 'en')
+
 }
 """
 
+# TODO query with isEssentialSkillFor / isOptionalSkillFor -> retrieve url -> retrieve type (check if it is in occupation.ttl or skill.ttl
+z = """
+    PREFIX esco: <http://data.europa.eu/esco/model#>      
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+SELECT ?skill ?prefLabel ?altLabel ?essential ?optional
+WHERE {  
+    ?skill skos:prefLabel ?prefLabel .
+    ?skill skos:altLabel ?altLabel .  
+    ?skill esco:isEssentialSkillFor ?essential .
+    ?skill esco:isOptionalSkillFor ?optional .  
+    
+    FILTER (lang(?prefLabel) = 'en')
+    FILTER (lang(?altLabel) = 'en')
+
+}
+"""
+output = sparql_query(z, "http://localhost:3030/ds")
+print(output)
+
+'''?skill esco:isEssentialSkillFor ?x .
+    ?skill esco:isOptionalSkillFor ?y .'''
 
 # get output -> into pickle
 
@@ -161,7 +255,7 @@ pickle.dump(output, file_x2)
 file_x2.close()'''
 
 '''output = sparql_query(y, "http://localhost:3030/ds")
-file_y = open("skill_digital_language.pickle", "wb")
+file_y = open("skill_digital_language_en.pickle", "wb")
 pickle.dump(output, file_y)
 file_y.close()'''
 
@@ -187,13 +281,15 @@ print(skill_digital_language)'''
 
 
 
+
+
 # evaluate similarity
 
 '''res = eval_results(skill, "writing Punjabi", ">=", 0.7, "levenshtein", 1)
 print(res)
-print(len(res))
+print(len(res))'''
 
-res1 = eval_results(skill_digital_language, "writing Punjabi", ">=", 0.7, "levenshtein", 2)
+'''res1 = eval_results(output, "writing Punjabi", ">=", 0.7, "levenshtein", 2)
 print(res1)
 print(len(res1))'''
 
