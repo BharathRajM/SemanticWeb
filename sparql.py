@@ -164,6 +164,8 @@ def score_plus(output, list_uri_skills_resume, list_uri_skills_job_proposal, lis
                             elif el == binding['optional']['value'] and binding['optional']['value'] in list_uri_occupations_job:
                                    score += 0.25
 
+       return score
+
 
 
 
