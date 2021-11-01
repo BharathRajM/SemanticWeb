@@ -127,16 +127,18 @@ def eval_results_tot(output, list_entities, compare, threshold, dist_type, taxon
        for e in list_entities:
               filter_uri = eval_results(output, e, compare, threshold, dist_type, taxonomy_type)
        matches = list(set(matches) | set(filter_uri)) # set not needed bcs already sets
+       score = len(matches)
 
-       return (matches, len(matches)) # list of matches and score -> score is 1 for each match -> total number of matches
+       return (matches, score) # list of matches and score -> score is 1 for each match -> total number of matches
 
 
-def score_plus(output, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_job):
+def score_plus(output, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_job, score):
        '''
        Given the output with essential and optional skills/occupations, the list of uris for resume's skills (output of
        eval_results_tot), the list of uris for job proposal's skills (output of eval_results_tot), the list of uris for
-       job proposal's occupations (output of eval_results_tot on the type of job), it returns the score to sum to the
-       score given by the matching entities (+0.5 if essential skill for a skill/occupation, +0.25 if optional skill)
+       job proposal's occupations (output of eval_results_tot on the type of job), it returns the final score (sum of
+       score given by the matching entities and plus score -> +0.5 if essential skill for a skill/occupation, +0.25 if
+       optional skill)
        :param output_skills:
        :param output_occupations:
        :param list_uri_skills_resume:
@@ -144,7 +146,6 @@ def score_plus(output, list_uri_skills_resume, list_uri_skills_job_proposal, lis
        :param list_uri_occupations_job:
        :return:
        '''
-       score = 0
        results = output['results']
 
        for binding in results['bindings']:
