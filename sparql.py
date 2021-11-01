@@ -4,10 +4,16 @@ import editdistance
 import jaccard_index
 from jaccard_index.jaccard import jaccard_index
 import jaro
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 import pickle
 
 
+
 # todo check similarity string
+
+q = fuzz.token_sort_ratio("python programming", "python")
+print(q)
 
 def sparql_query(query, endpoint):
        '''
@@ -16,6 +22,7 @@ def sparql_query(query, endpoint):
        :param endpoint:
        :return:
        '''
+
        sparql = SPARQLWrapper(endpoint)
        print(query)
        sparql.setQuery(query)
@@ -32,6 +39,7 @@ def levenshtein_sim(str1, str2):
        :param str2:
        :return:
        '''
+
        return 1 - (Levenshtein.distance(str1, str2) / max(len(str1), len(str2)))
 
 def edit_sim(str1, str2):
@@ -41,7 +49,13 @@ def edit_sim(str1, str2):
        :param str2:
        :return:
        '''
+
        return 1 - (editdistance.eval(str1, str2) / max(len(str1), len(str2)))
+
+def jaccard(str1, str2):
+       print("str1", str1)
+       print("str2", str2)
+       return jaccard_index(str1, str2)
 
 def string_sim(str1, str2, dist_type):
        '''
@@ -51,12 +65,13 @@ def string_sim(str1, str2, dist_type):
        :param dist_type:
        :return:
        '''
+
        if dist_type == "levenshtein":
               return levenshtein_sim(str1, str2)
        elif dist_type == "edit":
               return edit_sim(str1, str2)
        elif dist_type == "jaccard":
-              return jaccard_index(str1, str2)
+              return jaccard(str1, str2)
        elif dist_type == "jaro":
               return jaro.jaro_winkler_metric(str1, str2)
 
@@ -65,20 +80,24 @@ def eval_results(output, entity, compare, threshold, dist_type, taxonomy_type):
        '''
        Given the output containing all the labels from the taxonomy section of skills and occupations, the entity (string)
        to match and a threshold, it returns the labels with the related skill URI that have similarity with the entity
-       below the threshold, taxonomy_type (1,2) indicates if we consider the section of occupations and skills or of
-       different skills
+       below the threshold, taxonomy_type (1,2) indicates if we consider the section of occupations/skills or of different
+       skills
        :param output:
        :param entity:
+       :param compare:
        :param threshold:
+       :param dist_type:
+       :param taxonomy_type:
        :return:
        '''
+
        results = output['results']
        #print(results)
 
        filter_results = []
        filter_uri = []
 
-       if taxonomy_type == 1:
+       if taxonomy_type == 1: # files esco_occupation.ttl or esco_skill.ttl
               if compare == ">=":
                      for binding in results['bindings']:
                             if string_sim(binding['prefLabel']['value'], entity, dist_type) >= threshold or \
@@ -94,7 +113,7 @@ def eval_results(output, entity, compare, threshold, dist_type, taxonomy_type):
                                                dist_type) <= threshold:
                                    filter_results.append(binding)
                                    filter_uri.append(binding['skill']['value'])
-       else: # taxonomy part with 3 different skills does not have hiddenLabel
+       else: # files ict_skills_collection.ttl or language_skills_collection.ttl or transversal_skills_collection.ttl
               if compare == ">=":
                      for binding in results['bindings']:
                             if string_sim(binding['prefLabel']['value'], entity, dist_type) >= threshold or \
@@ -122,6 +141,7 @@ def eval_results_tot(output, list_entities, compare, threshold, dist_type, taxon
        :param taxonomy_type:
        :return:
        '''
+
        matches = []
        filter_uri = []
        for e in list_entities:
@@ -134,11 +154,11 @@ def eval_results_tot(output, list_entities, compare, threshold, dist_type, taxon
 
 def score_plus(output, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_job, score):
        '''
-       Given the output with essential and optional skills/occupations, the list of uris for resume's skills (output of
-       eval_results_tot), the list of uris for job proposal's skills (output of eval_results_tot), the list of uris for
-       job proposal's occupations (output of eval_results_tot on the type of job), it returns the final score (sum of
-       score given by the matching entities and plus score -> +0.5 if essential skill for a skill/occupation, +0.25 if
-       optional skill)
+       Given the query's output with essential and optional skills/occupations, the list of uris for resume's skills
+       (output of eval_results_tot), the list of uris for job proposal's skills (output of eval_results_tot), the list
+       of uris for job proposal's occupations (output of eval_results_tot on the type of job), it returns the final score
+       (sum of score given by the matching entities and plus score -> +0.5 if essential skill for a skill/occupation, +0.25
+       if optional skill)
        :param output_skills:
        :param output_occupations:
        :param list_uri_skills_resume:
@@ -146,23 +166,24 @@ def score_plus(output, list_uri_skills_resume, list_uri_skills_job_proposal, lis
        :param list_uri_occupations_job:
        :return:
        '''
+
        results = output['results']
 
        for binding in results['bindings']:
               for el in list_uri_skills_resume:
                      if len(binding['essential']['value']) >= 33 and binding['essential']['value'][0:33] == 'http://data.europa.eu/esco/skill/':
                             if el == binding['essential']['value'] and binding['essential']['value'] in list_uri_skills_job_proposal:
-                                   score += 0.5
+                                   score += 0.5 # if mapped skill from resume is essential skill for a skill required by job proposal
                             elif el == binding['optional']['value'] and binding['optional']['value'] in list_uri_skills_job_proposal:
-                                   score += 0.25
+                                   score += 0.25 # if mapped skill from resume is optional skill for a skill required by job proposal
 
        for binding in results['bindings']:
               for el in list_uri_occupations_job:
                      if len(binding['essential']['value']) >= 33 and binding['essential']['value'][0:38] == 'http://data.europa.eu/esco/occupation/':
                             if el == binding['essential']['value'] and binding['essential']['value'] in list_uri_occupations_job:
-                                   score += 0.5
+                                   score += 0.5 # if mapped skill from resume is essential skill for the job (occupation)
                             elif el == binding['optional']['value'] and binding['optional']['value'] in list_uri_occupations_job:
-                                   score += 0.25
+                                   score += 0.25 # if mapped skill from resume is optional skill for the job (occupation)
 
        return score
 
@@ -181,12 +202,12 @@ print(str[0:38])
 print(len(str[0:38]))
 print(edit_sim("python programming", "pytho prog"))
 print(levenshtein_sim("python programming", "pytho prog"))
-print(jaccard_index("python programming", "pytho prog"))
+print(jaccard_index("python prog", "pytho prog"))
 print(jaro.jaro_winkler_metric("python programming", "programmer"))
 
 
 
-# query ttl file skill/occupetion
+# query esco_occupation.ttl or esco_skill.ttl
 
 x = """
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#> 
@@ -201,7 +222,7 @@ WHERE {
 """
 
 
-# query set of 3 ttl little files
+# query set of 3 ttl files -> files ict_skills_collection.ttl, language_skills_collection.ttl, transversal_skills_collection.ttl
 
 y = """
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#> 
@@ -218,7 +239,8 @@ WHERE {
 }
 """
 
-# TODO query with isEssentialSkillFor / isOptionalSkillFor -> retrieve url -> retrieve type (check if it is in occupation.ttl or skill.ttl
+# query to check isEssentialSkillFor / isOptionalSkillFor
+
 z = """
     PREFIX esco: <http://data.europa.eu/esco/model#>      
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -234,8 +256,7 @@ WHERE {
 
 }
 """
-output = sparql_query(z, "http://localhost:3030/ds")
-print(output)
+
 
 '''?skill esco:isEssentialSkillFor ?x .
     ?skill esco:isOptionalSkillFor ?y .'''
@@ -262,6 +283,11 @@ file_y = open("skill_digital_language_en.pickle", "wb")
 pickle.dump(output, file_y)
 file_y.close()'''
 
+'''output = sparql_query(z, "http://localhost:3030/ds")
+file_y_1 = open("skill_digital_language_ess_opt.pickle", "wb")
+pickle.dump(output, file_y_1)
+file_y_1.close()'''
+
 
 # load pickle
 
@@ -281,8 +307,18 @@ print(occupation)'''
 skill_digital_language = pickle.load(file_y)
 print(skill_digital_language)'''
 
+'''file_y_1 = open("skill_digital_language_ess_opt.pickle", "rb")
+opt_ess = pickle.load(file_y_1)
+print(opt_ess)'''
 
 
+
+# list of retrieved entities
+'''li = ["english speaking"]
+#res1 = eval_results_tot(skill, l, '>=', 0.6, "levenshtein", 1)
+#print(res1)
+res2 = eval_results_tot(skill_digital_language, li, '>=', 0.9, "jaccard", 2)
+print(res2)'''
 
 
 
@@ -364,5 +400,3 @@ WHERE {
     FILTER (lcase(?label)= \"assistante scolaire\"@fr ) 
 }
 """
-
-
