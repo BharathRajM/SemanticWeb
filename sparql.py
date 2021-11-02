@@ -132,7 +132,7 @@ def eval_results(output, entity, compare, threshold, dist_type, taxonomy_type):
 def eval_results_tot(output, list_entities, compare, threshold, dist_type, taxonomy_type): # maybe instead of list entities we have key-value(resume/job proposal: list entities)
        '''
        Given the output from the query, the list of retrieved entities, it finds the matches (uris without duplicates
-        for the entities inside the taxonomy using string similarity
+       for the entities inside the taxonomy using string similarity
        :param output:
        :param list_entities:
        :param compare:
@@ -146,13 +146,13 @@ def eval_results_tot(output, list_entities, compare, threshold, dist_type, taxon
        filter_uri = []
        for e in list_entities:
               filter_uri = eval_results(output, e, compare, threshold, dist_type, taxonomy_type)
-       matches = list(set(matches) | set(filter_uri)) # set not needed bcs already sets
+       matches = (set(matches) | set(filter_uri)) # set not needed bcs already sets
        #score = len(matches)
 
-       return (matches) # list of matches and score -> score is 1 for each match -> total number of matches
+       return matches # list of matches and score -> score is 1 for each match -> total number of matches
 
 
-def score_plus(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_job):
+def score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_job):
        '''
        Given the query's output with essential and optional skills/occupations, the list of uris for resume's skills
        (output of eval_results_tot), the list of uris for job proposal's skills (output of eval_results_tot), the list
@@ -199,6 +199,42 @@ def score_plus(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_propo
 
 
 
+# Example
+
+# retrieved entities from resume/job proposal
+list_entities_resume = ["python programming", "public relation", "logical skill", "problem solving", "English"]
+list_entities_job = ["python", "java", "problem solving", "essay writing"]
+job_title = ["programmer"]
+
+# skills/occupations
+file_x1 = open("skill.pickle", "rb")
+skill = pickle.load(file_x1)
+print("done 1")
+file_x2 = open("occupation.pickle", "rb")
+occupation = pickle.load(file_x2)
+print("done 2")
+file_y = open("skill_digital_language.pickle", "rb")
+skill_digital_language = pickle.load(file_y)
+print("done 3")
+file_y_1 = open("skill_digital_language_ess_opt.pickle", "rb")
+opt_ess = pickle.load(file_y_1)
+print("done 4")
+
+resume_matches1 = eval_results_tot(skill, list_entities_resume, ">=", 0.7, "levenshtein", 1)
+print(resume_matches1)
+resume_matches2 = eval_results_tot(skill_digital_language, list_entities_resume, ">=", 0.7, "levenshtein", 2)
+print(resume_matches2)
+resume_matches_tot = resume_matches1 | resume_matches2
+print(resume_matches_tot)
+job_matches1 = eval_results_tot(skill, list_entities_job, ">=", 0.7, "levenshtein", 1)
+print(job_matches1)
+job_matches2 = eval_results_tot(skill_digital_language, list_entities_job, ">=", 0.7, "levenshtein", 2)
+print(job_matches2)
+job_matches_tot = job_matches1 | job_matches2
+print(job_matches_tot)
+score = score(opt_ess, resume_matches_tot, job_matches_tot, job_title)
+print(score)
+
 
 
 # Example
@@ -206,13 +242,13 @@ def score_plus(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_propo
 
 # similerities
 
-str = 'http://data.europa.eu/esco/occuaption/ciao'
+'''str = 'http://data.europa.eu/esco/occuaption/ciao'
 print(str[0:38])
 print(len(str[0:38]))
 print(edit_sim("python programming", "pytho prog"))
 print(levenshtein_sim("python programming", "pytho prog"))
 print(jaccard_index("python prog", "pytho prog"))
-print(jaro.jaro_winkler_metric("python programming", "programmer"))
+print(jaro.jaro_winkler_metric("python programming", "programmer"))'''
 
 
 
