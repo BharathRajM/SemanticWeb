@@ -13,9 +13,7 @@ import pickle
 # todo check similarity string
 # todo lower strings ??
 
-q = fuzz.ratio("python programming", "python")
-print(q)
-print(jaro.jaro_winkler_metric("python", "python"))
+
 def sparql_query(query, endpoint):
        '''
        Given a sparql query and an endpoint ("http://localhost:3030/ds"), it returns the results for the query
@@ -225,7 +223,6 @@ def score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, 
 
 
 
-print(levenshtein_sim("python", "python programing"))
 
 # Example
 
@@ -256,9 +253,9 @@ resume_matches2 = eval_results_tot(skill_digital_language, list_entities_resume,
 print('r2', resume_matches2)
 resume_matches_tot = resume_matches1 | resume_matches2 | {"http://data.europa.eu/esco/skill/7954861c-86d4-4529-afbb-2c23dab9ac74"}
 print('r3', resume_matches_tot)
-job_matches1 = eval_results_tot(skill, list_entities_job, ">=", 72, "fuzzywuzzy", 1)
+job_matches1 = eval_results_tot(skill, list_entities_job, ">=", 80, "fuzzywuzzy", 1)
 print('j1', job_matches1)
-job_matches2 = eval_results_tot(skill_digital_language, list_entities_job, ">=", 72, "fuzzywuzzy", 2)
+job_matches2 = eval_results_tot(skill_digital_language, list_entities_job, ">=", 80, "fuzzywuzzy", 2)
 print('j2', job_matches2)
 job_matches_tot = job_matches1 | job_matches2 | {"http://data.europa.eu/esco/skill/dbdafb2b-c6ab-451e-abe3-81bd73994394"}
 print('j3', job_matches_tot)
