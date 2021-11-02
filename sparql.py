@@ -13,9 +13,9 @@ import pickle
 # todo check similarity string
 # todo lower strings ??
 
-q = fuzz.token_sort_ratio("python programming", "python")
+q = fuzz.ratio("python programming", "python")
 print(q)
-
+print(jaro.jaro_winkler_metric("python", "python"))
 def sparql_query(query, endpoint):
        '''
        Given a sparql query and an endpoint ("http://localhost:3030/ds"), it returns the results for the query
@@ -54,9 +54,24 @@ def edit_sim(str1, str2):
        return 1 - (editdistance.eval(str1, str2) / max(len(str1), len(str2)))
 
 def jaccard(str1, str2):
-       print("str1", str1)
-       print("str2", str2)
+       '''
+       Given two strings, it returns the similarity between them by using jaccard similarity
+       :param str1:
+       :param str2:
+       :return:
+       '''
+
        return jaccard_index(str1, str2)
+
+def fuzzywuzzy(str1, str2):
+       '''
+       Given two strings, it returns the similarity between them by usinf fuzzywuzzy
+       :param str1:
+       :param str2:
+       :return:
+       '''
+
+       return fuzz.ratio(str1, str2)
 
 def string_sim(str1, str2, dist_type):
        '''
@@ -75,6 +90,8 @@ def string_sim(str1, str2, dist_type):
               return jaccard(str1, str2)
        elif dist_type == "jaro":
               return jaro.jaro_winkler_metric(str1, str2)
+       elif dist_type == "fuzzywuzzy":
+              return fuzzywuzzy(str1, str2)
 
 
 def eval_results(output, entity, compare, threshold, dist_type, taxonomy_type):
@@ -104,7 +121,6 @@ def eval_results(output, entity, compare, threshold, dist_type, taxonomy_type):
                             if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type) >= threshold or \
                                     string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type) >= threshold or \
                                     string_sim(binding['hiddenLabel']['value'].lower(), entity.lower(), dist_type) >= threshold:
-                                   print("qqqqqqqqqqqqqqqqqqqqqqq", binding)
                                    filter_results.append(binding)
                                    filter_uri.append(binding['skill']['value'])
               else:
@@ -144,9 +160,7 @@ def eval_results_tot(output, list_entities, compare, threshold, dist_type, taxon
        '''
 
        matches = []
-       filter_uri = []
        for e in list_entities:
-              print(e)
               filter_uri = eval_results(output, e, compare, threshold, dist_type, taxonomy_type)
               matches = (set(matches) | set(filter_uri)) # set not needed bcs already sets
        #score = len(matches)
@@ -204,9 +218,6 @@ def score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, 
                                    set_matching_2.add(el)
                      elif el == binding['skill']['value'] and binding['optional']['value'] in list_uri_occupations_job:
                             if el not in set_matching_2:
-                                   print(el)
-                                   print(binding['skill']['value'])
-                                   print(binding['optional']['value'])
                                    score += 0.25  # if mapped skill from resume is optional skill for the job (occupation)
                                    set_matching_2.add(el)
 
@@ -219,8 +230,8 @@ print(levenshtein_sim("python", "python programing"))
 # Example
 
 # retrieved entities from resume/job proposal
-list_entities_resume = ["python programming", "public relation", "logical skill", "problem solving", "English"]
-list_entities_job = ["python programming", "public relation", "logical skill", "problem solving", "English"]
+list_entities_resume = ["python", "public relation", "logical skill", "problem solving", "English"]
+list_entities_job = ["python", "public relation", "logic", "java", "English speaking"]
 job_title_uri = ["http://data.europa.eu/esco/skill/0b071b01-4b40-4936-9d6d-d8c5609481b4"]
 
 
@@ -228,7 +239,7 @@ job_title_uri = ["http://data.europa.eu/esco/skill/0b071b01-4b40-4936-9d6d-d8c56
 # skills/occupations
 file_x1 = open("skill.pickle", "rb")
 skill = pickle.load(file_x1)
-print(skill)
+print("done 1")
 file_x2 = open("occupation.pickle", "rb")
 occupation = pickle.load(file_x2)
 print("done 2")
@@ -239,20 +250,20 @@ file_y_1 = open("skill_digital_language_ess_opt.pickle", "rb")
 opt_ess = pickle.load(file_y_1)
 print("done 4")
 
-resume_matches1 = eval_results_tot(skill, list_entities_resume, ">=", 0.65, "levenshtein", 1)
+resume_matches1 = eval_results_tot(skill, list_entities_resume, ">=", 80, "fuzzywuzzy", 1)
 print('r1', resume_matches1)
-resume_matches2 = eval_results_tot(skill_digital_language, list_entities_resume, ">=", 0.65, "levenshtein", 2)
+resume_matches2 = eval_results_tot(skill_digital_language, list_entities_resume, ">=", 80, "fuzzywuzzy", 2)
 print('r2', resume_matches2)
 resume_matches_tot = resume_matches1 | resume_matches2 | {"http://data.europa.eu/esco/skill/7954861c-86d4-4529-afbb-2c23dab9ac74"}
 print('r3', resume_matches_tot)
-'''job_matches1 = eval_results_tot(skill, list_entities_job, ">=", 0.5, "levenshtein", 1)
+job_matches1 = eval_results_tot(skill, list_entities_job, ">=", 72, "fuzzywuzzy", 1)
 print('j1', job_matches1)
-job_matches2 = eval_results_tot(skill_digital_language, list_entities_job, ">=", 0.5, "levenshtein", 2)
+job_matches2 = eval_results_tot(skill_digital_language, list_entities_job, ">=", 72, "fuzzywuzzy", 2)
 print('j2', job_matches2)
 job_matches_tot = job_matches1 | job_matches2 | {"http://data.europa.eu/esco/skill/dbdafb2b-c6ab-451e-abe3-81bd73994394"}
 print('j3', job_matches_tot)
 score = score(opt_ess, resume_matches_tot, job_matches_tot, job_title_uri)
-print(score)'''
+print(score)
 
 
 
