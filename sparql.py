@@ -175,24 +175,38 @@ def score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, 
        for el in list_uri_skills_resume: # retrieved from all the 5 skills ttl files
               if el in list_uri_skills_job_proposal:
                      score += 1  # if resume's skill and job proposal's map to same entity in the taxonomy
+                     print("SCORE", score)
 
+       set_matching = set()
+       set_matching_2 = set()
        # score given by entities from resume that map to essential/optional skills for job proposal's skills
        for binding in results_ess_opt['bindings']:
               for el in list_uri_skills_resume:
-                     if len(binding['essential']['value']) >= 33 and binding['essential']['value'][0:33] == 'http://data.europa.eu/esco/skill/':
-                            if el == binding['essential']['value'] and binding['essential']['value'] in list_uri_skills_job_proposal:
+                     #if len(binding['essential']['value']) >= 33 and binding['essential']['value'][0:33] == 'http://data.europa.eu/esco/skill/':
+                     if el == binding['skill']['value'] and binding['essential']['value'] in list_uri_skills_job_proposal:
+                            if el not in set_matching:
                                    score += 0.5 # if mapped skill from resume is essential skill for a skill required by job proposal
-                            elif el == binding['optional']['value'] and binding['optional']['value'] in list_uri_skills_job_proposal:
-                                   score += 0.25 # if mapped skill from resume is optional skill for a skill required by job proposal
+                                   set_matching.add(el)
+                     elif el == binding['skill']['value'] and binding['optional']['value'] in list_uri_skills_job_proposal:
+                            if el not in set_matching:
+                                   score += 0.25 # if mapped skill from resume is optional skill for a skill required by job proposalset_matching.add(el)
+                                   set_matching.add(el)
 
        # score given by entities from resume that map to essential/optional skills for job proposal's occupation
-       for binding in results_ess_opt['bindings']:
-              for el in list_uri_occupations_job:
-                     if len(binding['essential']['value']) >= 33 and binding['essential']['value'][0:38] == 'http://data.europa.eu/esco/occupation/':
-                            if el == binding['essential']['value'] and binding['essential']['value'] in list_uri_occupations_job:
-                                   score += 0.5 # if mapped skill from resume is essential skill for the job (occupation)
-                            elif el == binding['optional']['value'] and binding['optional']['value'] in list_uri_occupations_job:
-                                   score += 0.25 # if mapped skill from resume is optional skill for the job (occupation)
+       #for binding in results_ess_opt['bindings']:
+              #for el in list_uri_occupations_job:
+                     #if len(binding['essential']['value']) >= 33 and binding['essential']['value'][0:38] == 'http://data.europa.eu/esco/occupation/':
+                     if el == binding['skill']['value'] and binding['essential']['value'] in list_uri_occupations_job:
+                            if el not in set_matching_2:
+                                   score += 0.5  # if mapped skill from resume is essential skill for the job (occupation)
+                                   set_matching_2.add(el)
+                     elif el == binding['skill']['value'] and binding['optional']['value'] in list_uri_occupations_job:
+                            if el not in set_matching_2:
+                                   print(el)
+                                   print(binding['skill']['value'])
+                                   print(binding['optional']['value'])
+                                   score += 0.25  # if mapped skill from resume is optional skill for the job (occupation)
+                                   set_matching_2.add(el)
 
        return score
 
@@ -203,13 +217,16 @@ def score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, 
 
 # retrieved entities from resume/job proposal
 list_entities_resume = ["python programming", "public relation", "logical skill", "problem solving", "English"]
-list_entities_job = ["python", "java", "problem solving", "essay writing"]
-job_title = ["programmer"]
+list_entities_job = ["python programming", "public relation", "logical skill", "problem solving", "English"]
+job_title_uri = ["http://data.europa.eu/esco/skill/0b071b01-4b40-4936-9d6d-d8c5609481b4"]
+
+
+
 
 # skills/occupations
 file_x1 = open("skill.pickle", "rb")
 skill = pickle.load(file_x1)
-print("done 1")
+print(skill)
 file_x2 = open("occupation.pickle", "rb")
 occupation = pickle.load(file_x2)
 print("done 2")
@@ -220,19 +237,19 @@ file_y_1 = open("skill_digital_language_ess_opt.pickle", "rb")
 opt_ess = pickle.load(file_y_1)
 print("done 4")
 
-resume_matches1 = eval_results_tot(skill, list_entities_resume, ">=", 0.7, "levenshtein", 1)
-print(resume_matches1)
-resume_matches2 = eval_results_tot(skill_digital_language, list_entities_resume, ">=", 0.7, "levenshtein", 2)
-print(resume_matches2)
-resume_matches_tot = resume_matches1 | resume_matches2
-print(resume_matches_tot)
-job_matches1 = eval_results_tot(skill, list_entities_job, ">=", 0.7, "levenshtein", 1)
-print(job_matches1)
-job_matches2 = eval_results_tot(skill_digital_language, list_entities_job, ">=", 0.7, "levenshtein", 2)
-print(job_matches2)
-job_matches_tot = job_matches1 | job_matches2
-print(job_matches_tot)
-score = score(opt_ess, resume_matches_tot, job_matches_tot, job_title)
+resume_matches1 = eval_results_tot(skill, list_entities_resume, ">=", 0.5, "levenshtein", 1)
+print('r1', resume_matches1)
+resume_matches2 = eval_results_tot(skill_digital_language, list_entities_resume, ">=", 0.5, "levenshtein", 2)
+print('r2', resume_matches2)
+resume_matches_tot = resume_matches1 | resume_matches2 | {"http://data.europa.eu/esco/skill/7954861c-86d4-4529-afbb-2c23dab9ac74"}
+print('r3', resume_matches_tot)
+job_matches1 = eval_results_tot(skill, list_entities_job, ">=", 0.5, "levenshtein", 1)
+print('j1', job_matches1)
+job_matches2 = eval_results_tot(skill_digital_language, list_entities_job, ">=", 0.5, "levenshtein", 2)
+print('j2', job_matches2)
+job_matches_tot = job_matches1 | job_matches2 | {"http://data.europa.eu/esco/skill/dbdafb2b-c6ab-451e-abe3-81bd73994394"}
+print('j3', job_matches_tot)
+score = score(opt_ess, resume_matches_tot, job_matches_tot, job_title_uri)
 print(score)
 
 
@@ -262,7 +279,7 @@ SELECT ?skill ?prefLabel ?altLabel ?hiddenLabel
 WHERE {     
     ?skill skos:prefLabel ?prefLabel .
     ?skill skos:altLabel ?altLabel .
-    ?skill skos:hiddenLabel ?hiddenLabel .   
+    ?skill skos:hiddenLabel ?hiddenLabel .  
 }
 """
 
