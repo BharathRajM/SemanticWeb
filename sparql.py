@@ -11,6 +11,7 @@ import pickle
 
 
 # todo check similarity string
+# todo lower strings ??
 
 q = fuzz.token_sort_ratio("python programming", "python")
 print(q)
@@ -100,30 +101,30 @@ def eval_results(output, entity, compare, threshold, dist_type, taxonomy_type):
        if taxonomy_type == 1: # files esco_occupation.ttl or esco_skill.ttl
               if compare == ">=":
                      for binding in results['bindings']:
-                            if string_sim(binding['prefLabel']['value'], entity, dist_type) >= threshold or \
-                                    string_sim(binding['altLabel']['value'], entity, dist_type) >= threshold or \
-                                    string_sim(binding['hiddenLabel']['value'], entity, dist_type) >= threshold:
+                            if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type) >= threshold or \
+                                    string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type) >= threshold or \
+                                    string_sim(binding['hiddenLabel']['value'].lower(), entity.lower(), dist_type) >= threshold:
+                                   print("qqqqqqqqqqqqqqqqqqqqqqq", binding)
                                    filter_results.append(binding)
                                    filter_uri.append(binding['skill']['value'])
               else:
                      for binding in results['bindings']:
-                            if string_sim(binding['prefLabel']['value'], entity, dist_type) <= threshold or \
-                                    string_sim(binding['altLabel']['value'], entity, dist_type) <= threshold or \
-                                    string_sim(binding['hiddenLabel']['value'], entity,
-                                               dist_type) <= threshold:
+                            if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type) <= threshold or \
+                                    string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type) <= threshold or \
+                                    string_sim(binding['hiddenLabel']['value'].lower(), entity.lower(), dist_type) <= threshold:
                                    filter_results.append(binding)
                                    filter_uri.append(binding['skill']['value'])
        else: # files ict_skills_collection.ttl or language_skills_collection.ttl or transversal_skills_collection.ttl
               if compare == ">=":
                      for binding in results['bindings']:
-                            if string_sim(binding['prefLabel']['value'], entity, dist_type) >= threshold or \
-                                    string_sim(binding['altLabel']['value'], entity, dist_type) >= threshold:
+                            if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type) >= threshold or \
+                                    string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type) >= threshold:
                                    filter_results.append(binding)
                                    filter_uri.append(binding['skill']['value'])
               else:
                      for binding in results['bindings']:
-                            if string_sim(binding['prefLabel']['value'], entity, dist_type) <= threshold or \
-                                    string_sim(binding['altLabel']['value'], entity, dist_type) <= threshold:
+                            if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type) <= threshold or \
+                                    string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type) <= threshold:
                                    filter_results.append(binding)
                                    filter_uri.append(binding['skill']['value'])
        return list(set(filter_uri)) # if needed we can use filter_results
@@ -145,8 +146,9 @@ def eval_results_tot(output, list_entities, compare, threshold, dist_type, taxon
        matches = []
        filter_uri = []
        for e in list_entities:
+              print(e)
               filter_uri = eval_results(output, e, compare, threshold, dist_type, taxonomy_type)
-       matches = (set(matches) | set(filter_uri)) # set not needed bcs already sets
+              matches = (set(matches) | set(filter_uri)) # set not needed bcs already sets
        #score = len(matches)
 
        return matches # list of matches and score -> score is 1 for each match -> total number of matches
@@ -212,6 +214,7 @@ def score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, 
 
 
 
+print(levenshtein_sim("python", "python programing"))
 
 # Example
 
@@ -219,7 +222,6 @@ def score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, 
 list_entities_resume = ["python programming", "public relation", "logical skill", "problem solving", "English"]
 list_entities_job = ["python programming", "public relation", "logical skill", "problem solving", "English"]
 job_title_uri = ["http://data.europa.eu/esco/skill/0b071b01-4b40-4936-9d6d-d8c5609481b4"]
-
 
 
 
@@ -237,20 +239,20 @@ file_y_1 = open("skill_digital_language_ess_opt.pickle", "rb")
 opt_ess = pickle.load(file_y_1)
 print("done 4")
 
-resume_matches1 = eval_results_tot(skill, list_entities_resume, ">=", 0.5, "levenshtein", 1)
+resume_matches1 = eval_results_tot(skill, list_entities_resume, ">=", 0.65, "levenshtein", 1)
 print('r1', resume_matches1)
-resume_matches2 = eval_results_tot(skill_digital_language, list_entities_resume, ">=", 0.5, "levenshtein", 2)
+resume_matches2 = eval_results_tot(skill_digital_language, list_entities_resume, ">=", 0.65, "levenshtein", 2)
 print('r2', resume_matches2)
 resume_matches_tot = resume_matches1 | resume_matches2 | {"http://data.europa.eu/esco/skill/7954861c-86d4-4529-afbb-2c23dab9ac74"}
 print('r3', resume_matches_tot)
-job_matches1 = eval_results_tot(skill, list_entities_job, ">=", 0.5, "levenshtein", 1)
+'''job_matches1 = eval_results_tot(skill, list_entities_job, ">=", 0.5, "levenshtein", 1)
 print('j1', job_matches1)
 job_matches2 = eval_results_tot(skill_digital_language, list_entities_job, ">=", 0.5, "levenshtein", 2)
 print('j2', job_matches2)
 job_matches_tot = job_matches1 | job_matches2 | {"http://data.europa.eu/esco/skill/dbdafb2b-c6ab-451e-abe3-81bd73994394"}
 print('j3', job_matches_tot)
 score = score(opt_ess, resume_matches_tot, job_matches_tot, job_title_uri)
-print(score)
+print(score)'''
 
 
 
