@@ -147,29 +147,37 @@ def eval_results_tot(output, list_entities, compare, threshold, dist_type, taxon
        for e in list_entities:
               filter_uri = eval_results(output, e, compare, threshold, dist_type, taxonomy_type)
        matches = list(set(matches) | set(filter_uri)) # set not needed bcs already sets
-       score = len(matches)
+       #score = len(matches)
 
-       return (matches, score) # list of matches and score -> score is 1 for each match -> total number of matches
+       return (matches) # list of matches and score -> score is 1 for each match -> total number of matches
 
 
-def score_plus(output, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_job, score):
+def score_plus(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_job):
        '''
        Given the query's output with essential and optional skills/occupations, the list of uris for resume's skills
        (output of eval_results_tot), the list of uris for job proposal's skills (output of eval_results_tot), the list
        of uris for job proposal's occupations (output of eval_results_tot on the type of job), it returns the final score
-       (sum of score given by the matching entities and plus score -> +0.5 if essential skill for a skill/occupation, +0.25
-       if optional skill)
-       :param output_skills:
-       :param output_occupations:
+       (sum of score given by the matching entities and additional score -> +0.5 if essential skill for a skill/occupation,
+       +0.25 if optional skill)
+       :param output_ess_opt:
        :param list_uri_skills_resume:
        :param list_uri_skills_job_proposal:
        :param list_uri_occupations_job:
        :return:
        '''
 
-       results = output['results']
+       # results from essential/optional skills
+       results_ess_opt = output_ess_opt['results']
 
-       for binding in results['bindings']:
+       score = 0
+
+       # score given by entities from resume and job proposal mapping to same entities into the taxonomy
+       for el in list_uri_skills_resume: # retrieved from all the 5 skills ttl files
+              if el in list_uri_skills_job_proposal:
+                     score += 1  # if resume's skill and job proposal's map to same entity in the taxonomy
+
+       # score given by entities from resume that map to essential/optional skills for job proposal's skills
+       for binding in results_ess_opt['bindings']:
               for el in list_uri_skills_resume:
                      if len(binding['essential']['value']) >= 33 and binding['essential']['value'][0:33] == 'http://data.europa.eu/esco/skill/':
                             if el == binding['essential']['value'] and binding['essential']['value'] in list_uri_skills_job_proposal:
@@ -177,7 +185,8 @@ def score_plus(output, list_uri_skills_resume, list_uri_skills_job_proposal, lis
                             elif el == binding['optional']['value'] and binding['optional']['value'] in list_uri_skills_job_proposal:
                                    score += 0.25 # if mapped skill from resume is optional skill for a skill required by job proposal
 
-       for binding in results['bindings']:
+       # score given by entities from resume that map to essential/optional skills for job proposal's occupation
+       for binding in results_ess_opt['bindings']:
               for el in list_uri_occupations_job:
                      if len(binding['essential']['value']) >= 33 and binding['essential']['value'][0:38] == 'http://data.europa.eu/esco/occupation/':
                             if el == binding['essential']['value'] and binding['essential']['value'] in list_uri_occupations_job:
