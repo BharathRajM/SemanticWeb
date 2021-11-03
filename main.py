@@ -1,5 +1,5 @@
 from sparql import *
-
+import operator
 
 def job_eval(dict_jobs_entities_title, compare, threshold, dist_type, skill, occupation, skill_digital_language):
     '''
@@ -14,11 +14,12 @@ def job_eval(dict_jobs_entities_title, compare, threshold, dist_type, skill, occ
 
     dict_jobs_results = {}
 
-    for job, job_value in dict_jobs_entities_title:
-        job_matches1 = eval_results_tot(skill, job_value[0], compare, threshold, dist_type, 1)
-        job_matches2 = eval_results_tot(skill_digital_language, job_value[0], compare, threshold, dist_type, 2)
+    for job in dict_jobs_entities_title:
+
+        job_matches1 = eval_results_tot(skill, dict_jobs_entities_title[job][0], compare, threshold, dist_type, 1)
+        job_matches2 = eval_results_tot(skill_digital_language, dict_jobs_entities_title[job][0], compare, threshold, dist_type, 2)
         job_matches_tot = job_matches1 | job_matches2
-        job_occupation_uris = eval_results(occupation, job_value[1], compare, threshold, dist_type, 1)
+        job_occupation_uris = eval_results(occupation, dict_jobs_entities_title[job][1], compare, threshold, dist_type, 1)
         dict_jobs_results[job] = (job_matches_tot, job_occupation_uris)
 
     return dict_jobs_results
@@ -51,15 +52,17 @@ def match_resume_job(dict_jobs_results, resume_results):
 
     file_y_1 = open("skill_digital_language_ess_opt.pickle", "rb")
     opt_ess = pickle.load(file_y_1)
-    print("done 4")
+    print("loaded file taxonomy")
 
     dict_scores = {}
 
-    for job_key, job_results in dict_jobs_results:
-        score = compute_score(opt_ess, resume_results[0], job_results[0], resume_results[1], job_results[1])
+    for job_key in dict_jobs_results:
+        score = compute_score(opt_ess, resume_results[0], dict_jobs_results[job_key][0], resume_results[1], dict_jobs_results[job_key][1])
         dict_scores[job_key] = score
 
-    dict_sorted_scores = dict(sorted(dict_scores.items(), key=lambda item: item[1]))
+    #dict_sorted_scores = dict(sorted(dict_scores.items(), key=lambda item: item[1]))
+
+    dict_sorted_scores = dict(sorted(dict_scores.items(), key=operator.itemgetter(1), reverse=True))
 
     return dict_sorted_scores
 
@@ -67,9 +70,9 @@ def match_resume_job(dict_jobs_results, resume_results):
 # todo replace with real values
 # todo we do not use education here, if we wwannt e have to add it
 
-dict_jobs_entities_title = "from entity extraction" # each key is a different job proposal, each value is a tuple with one list of entities and the job title
-list_resume_entities = "from entity extraction"  # list of entities for resume from entities extr
-resume_title = "resume title" # resume title
+dict_jobs_entities_title = {'1': (["configuration and design skills", "python", "java", "machine learning", "data analytics"], "data scientist"), "2": (["communication", "english", "logic", "python", "public speaking"], "data manager")} # each key is a different job proposal, each value is a tuple with one list of entities and the job title
+list_resume_entities = ["java", "python", "english speaking", "project presentation", "data analytics"]  # list of entities for resume from entities extr
+resume_title = "data scientis" # resume title
 compare = ">="
 threshold = 80
 dist_type = "fuzzywuzzy"
@@ -77,22 +80,28 @@ dist_type = "fuzzywuzzy"
 # files pickle for texonomy
 file_x1 = open("skill.pickle", "rb")
 skill = pickle.load(file_x1)
-print("done 1")
+print("loaded file skills taxonomy")
 file_x2 = open("occupation.pickle", "rb")
 occupation = pickle.load(file_x2)
-print("done 2")
+print("loaded file occupetions taxonomy")
 file_y = open("skill_digital_language.pickle", "rb")
 skill_digital_language = pickle.load(file_y)
-print("done 3")
+print("loaded file 3 skills, ict skills, languages taxonomy")
 
 
 
 # compute mapping of job proposals sills and title to skills and occupations in the taxonomy
-output_job = job_eval(dict_jobs_entities_title, compare, threshold, dist_type, occupation, skill_digital_language)
+output_job = job_eval(dict_jobs_entities_title, compare, threshold, dist_type, skill, occupation, skill_digital_language)
+print("job matched")
+print(output_job)
 # compute mapping of resume sills and title to skills and occupations in the taxonomy
 output_resume = resume_eval (list_resume_entities, resume_title, compare, threshold, dist_type, skill, occupation, skill_digital_language)
+print("resume matched")
+print(output_resume)
 # compute final score for each job proposal for the given resume
 score_result = match_resume_job(output_job, output_resume)
+print("scoes")
+print(score_result)
 
 
 # input examples
