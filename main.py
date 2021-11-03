@@ -86,7 +86,7 @@ occupation = pickle.load(file_x2)
 print("loaded file occupetions taxonomy")
 file_y = open("skill_digital_language.pickle", "rb")
 skill_digital_language = pickle.load(file_y)
-print("loaded file 3 skills, ict skills, languages taxonomy")
+print("loaded file skills, ict skills, languages taxonomy")
 
 
 
