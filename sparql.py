@@ -163,10 +163,10 @@ def eval_results_tot(output, list_entities, compare, threshold, dist_type, taxon
               matches = (set(matches) | set(filter_uri)) # set not needed bcs already sets
        #score = len(matches)
 
-       return matches # list of matches and score -> score is 1 for each match -> total number of matches
+       return matches # list of matches (uris)
 
 
-def score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_job):
+def compute_score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_resume, list_uri_occupations_job):
        '''
        Given the query's output with essential and optional skills/occupations, the list of uris for resume's skills
        (output of eval_results_tot), the list of uris for job proposal's skills (output of eval_results_tot), the list
@@ -184,6 +184,10 @@ def score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, 
        results_ess_opt = output_ess_opt['results']
 
        score = 0
+
+       # score given by if resume title and job title corresponds
+       if len(set(list_uri_occupations_resume).intersection(set(list_uri_occupations_job))) != 0:
+              score += 1
 
        # score given by entities from resume and job proposal mapping to same entities into the taxonomy
        for el in list_uri_skills_resume: # retrieved from all the 5 skills ttl files
@@ -227,7 +231,7 @@ def score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, 
 # Example
 
 # retrieved entities from resume/job proposal
-list_entities_resume = ["python", "public relation", "logical skill", "problem solving", "English"]
+'''list_entities_resume = ["python", "public relation", "logical skill", "problem solving", "English"]
 list_entities_job = ["python", "public relation", "logic", "java", "English speaking"]
 job_title_uri = ["http://data.europa.eu/esco/skill/0b071b01-4b40-4936-9d6d-d8c5609481b4"]
 
@@ -259,9 +263,9 @@ job_matches2 = eval_results_tot(skill_digital_language, list_entities_job, ">=",
 print('j2', job_matches2)
 job_matches_tot = job_matches1 | job_matches2 | {"http://data.europa.eu/esco/skill/dbdafb2b-c6ab-451e-abe3-81bd73994394"}
 print('j3', job_matches_tot)
-score = score(opt_ess, resume_matches_tot, job_matches_tot, job_title_uri)
+score = compute_score(opt_ess, resume_matches_tot, job_matches_tot, job_title_uri)
 print(score)
-
+'''
 
 
 # Example
