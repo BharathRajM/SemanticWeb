@@ -74,7 +74,7 @@ compare = ">="
 threshold = 80
 dist_type = "fuzzywuzzy"
 
-
+# files pickle for texonomy
 file_x1 = open("skill.pickle", "rb")
 skill = pickle.load(file_x1)
 print("done 1")
