@@ -60,7 +60,9 @@ compare = ">="
 threshold = 80
 dist_type = "fuzzywuzzy"
 
+# compute mapping of resume/job proposals sills and title to skills and occupations in the taxonomy
 output = job_resume_eval(dict_jobs_entities_title, list_resume_entities, resume_title, compare, threshold, dist_type)
+# compute final score for each job proposal for the given resume
 score_result = match_resume_job(output[0], output[1])
 
 '''x = set()
