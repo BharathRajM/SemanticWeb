@@ -113,6 +113,7 @@ def eval_results(output, entity, compare, threshold, dist_type, taxonomy_type):
        filter_results = []
        filter_uri = []
 
+
        if taxonomy_type == 1: # files esco_occupation.ttl or esco_skill.ttl
               if compare == ">=":
                      for binding in results['bindings']:
@@ -193,7 +194,6 @@ def compute_score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_pr
        for el in list_uri_skills_resume: # retrieved from all the 5 skills ttl files
               if el in list_uri_skills_job_proposal:
                      score += 1  # if resume's skill and job proposal's map to same entity in the taxonomy
-                     print("SCORE", score)
 
        set_matching = set()
        set_matching_2 = set()
