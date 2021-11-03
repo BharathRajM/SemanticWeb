@@ -2,7 +2,17 @@ from sparql import *
 
 
 def job_resume_eval(dict_jobs_entities_title, list_resume_entities, resume_title, compare, threshold, dist_type):
-
+    '''
+    Given the entities (skills) and csv fields (title) extracted for the resume and job proposals, it maps them to the
+    ontology retrieving the corresponding entites (uris) in it using string similarity
+    :param dict_jobs_entities_title:
+    :param list_resume_entities:
+    :param resume_title:
+    :param compare:
+    :param threshold:
+    :param dist_type:
+    :return:
+    '''
     file_x1 = open("skill.pickle", "rb")
     skill = pickle.load(file_x1)
     print("done 1")
@@ -32,7 +42,8 @@ def job_resume_eval(dict_jobs_entities_title, list_resume_entities, resume_title
 
 
 def match_resume_job(dict_jobs_results, resume_results):
-
+    '''Given the results (uris) for resume and job proposals, it computes the final score for each job proposal to
+    match with the resume'''
     file_y_1 = open("skill_digital_language_ess_opt.pickle", "rb")
     opt_ess = pickle.load(file_y_1)
     print("done 4")
@@ -48,10 +59,8 @@ def match_resume_job(dict_jobs_results, resume_results):
     return dict_sorted_scores
 
 
-# TODO
-# get dict of lists for resume/job entities
-# use it into the functions
-
+# todo replace with real values
+# todo we do not use education here, if we wwannt e have to add it
 
 dict_jobs_entities_title = "from entity extraction" # each key is a different job proposal, each value is a tuple with one list of entities and the job title
 list_resume_entities = "from entity extraction"  # list of entities for resume from entities extr
@@ -65,21 +74,14 @@ output = job_resume_eval(dict_jobs_entities_title, list_resume_entities, resume_
 # compute final score for each job proposal for the given resume
 score_result = match_resume_job(output[0], output[1])
 
-'''x = set()
-x.add("e")
-x.add("d")
-x.add("e")
-x.add("f")
-print(x)
 
-y = set()
-y.add("e")
-y.add("s")
-y.add("q")
-print(y)
+# input examples
 
-print(x.intersection(y))
+# dict_jobs_entities_title -> {"job1": (["skill1", "skill2", ...], "job_title_1"), ..., "jobn":(["skill1", "skill2", ...], "job_title_1")}
+# where skill_i is skill entity extracted from text for job proposal, while "job_title_i" is extracted from the field job_title in the csv
 
-l = [1, 2, 3]
-n = [5, 7]
-print(len(set(l).intersection(set(n))) != 0)'''
+# list_resume_entities -> ["skill1", "skill2", ...]
+# where skill_i is skill entity extracted from text for resume
+
+# resume_title -> "resume title"
+# extracted from the field resume_title in the csv
