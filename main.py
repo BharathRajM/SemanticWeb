@@ -1,27 +1,16 @@
 from sparql import *
 
 
-def job_resume_eval(dict_jobs_entities_title, list_resume_entities, resume_title, compare, threshold, dist_type):
+def job_eval(dict_jobs_entities_title, compare, threshold, dist_type, skill, occupation, skill_digital_language):
     '''
-    Given the entities (skills) and csv fields (title) extracted for the resume and job proposals, it maps them to the
+    Given the entities (skills) and csv fields (title) extracted for the job proposals, it maps them to the
     ontology retrieving the corresponding entites (uris) in it using string similarity
     :param dict_jobs_entities_title:
-    :param list_resume_entities:
-    :param resume_title:
     :param compare:
     :param threshold:
     :param dist_type:
     :return:
     '''
-    file_x1 = open("skill.pickle", "rb")
-    skill = pickle.load(file_x1)
-    print("done 1")
-    file_x2 = open("occupation.pickle", "rb")
-    occupation = pickle.load(file_x2)
-    print("done 2")
-    file_y = open("skill_digital_language.pickle", "rb")
-    skill_digital_language = pickle.load(file_y)
-    print("done 3")
 
     dict_jobs_results = {}
 
@@ -32,18 +21,34 @@ def job_resume_eval(dict_jobs_entities_title, list_resume_entities, resume_title
         job_occupation_uris = eval_results(occupation, job_value[1], compare, threshold, dist_type, 1)
         dict_jobs_results[job] = (job_matches_tot, job_occupation_uris)
 
+    return dict_jobs_results
+
+
+def resume_eval(list_resume_entities, resume_title, compare, threshold, dist_type, skill, occupation, skill_digital_language):
+    '''
+    Given the entities (skills) and csv fields (title) extracted for the resume, it maps them to the
+    ontology retrieving the corresponding entites (uris) in it using string similarity
+    :param dict_jobs_entities_title:
+    :param compare:
+    :param threshold:
+    :param dist_type:
+    :return:
+    '''
+
     resume_matches1 = eval_results_tot(skill, list_resume_entities, compare, threshold, dist_type, 1)
     resume_matches2 = eval_results_tot(skill_digital_language, list_resume_entities, compare, threshold, dist_type, 2)
     resume_matches_tot = resume_matches1 | resume_matches2
     resume_occupation_uris = eval_results(occupation, resume_title, compare, threshold, dist_type, 1)
     resume_results = (resume_matches_tot, resume_occupation_uris)
 
-    return dict_jobs_results, resume_results
+    return resume_results
+
 
 
 def match_resume_job(dict_jobs_results, resume_results):
     '''Given the results (uris) for resume and job proposals, it computes the final score for each job proposal to
     match with the resume'''
+
     file_y_1 = open("skill_digital_language_ess_opt.pickle", "rb")
     opt_ess = pickle.load(file_y_1)
     print("done 4")
@@ -69,10 +74,25 @@ compare = ">="
 threshold = 80
 dist_type = "fuzzywuzzy"
 
-# compute mapping of resume/job proposals sills and title to skills and occupations in the taxonomy
-output = job_resume_eval(dict_jobs_entities_title, list_resume_entities, resume_title, compare, threshold, dist_type)
+
+file_x1 = open("skill.pickle", "rb")
+skill = pickle.load(file_x1)
+print("done 1")
+file_x2 = open("occupation.pickle", "rb")
+occupation = pickle.load(file_x2)
+print("done 2")
+file_y = open("skill_digital_language.pickle", "rb")
+skill_digital_language = pickle.load(file_y)
+print("done 3")
+
+
+
+# compute mapping of job proposals sills and title to skills and occupations in the taxonomy
+output_job = job_eval(dict_jobs_entities_title, compare, threshold, dist_type, occupation, skill_digital_language)
+# compute mapping of resume sills and title to skills and occupations in the taxonomy
+output_resume = resume_eval (list_resume_entities, resume_title, compare, threshold, dist_type, skill, occupation, skill_digital_language)
 # compute final score for each job proposal for the given resume
-score_result = match_resume_job(output[0], output[1])
+score_result = match_resume_job(output_job, output_resume)
 
 
 # input examples
