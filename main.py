@@ -19,7 +19,10 @@ def job_eval(dict_jobs_entities_title, compare, threshold, dist_type, skill, occ
         job_matches1 = eval_results_tot(skill, dict_jobs_entities_title[job][0], compare, threshold, dist_type, 1)
         job_matches2 = eval_results_tot(skill_digital_language, dict_jobs_entities_title[job][0], compare, threshold, dist_type, 2)
         job_matches_tot = job_matches1 | job_matches2
-        job_occupation_uris = eval_results(occupation, dict_jobs_entities_title[job][1], compare, threshold, dist_type, 1)
+        #job_occupation_uris = eval_results(occupation, dict_jobs_entities_title[job][1], compare, threshold, dist_type, 1)
+        job_occupation_uris = eval_results_uri_occupation(occupation, dict_jobs_entities_title[job][1], compare, threshold, dist_type)
+        print("dict_jobs_entities_title[job][1]", dict_jobs_entities_title[job][1])
+        print("job", job_occupation_uris)
         dict_jobs_results[job] = (job_matches_tot, job_occupation_uris)
 
     return dict_jobs_results
@@ -50,14 +53,18 @@ def match_resume_job(dict_jobs_results, resume_results):
     '''Given the results (uris) for resume and job proposals, it computes the final score for each job proposal to
     match with the resume'''
 
-    file_y_1 = open("skill_digital_language_ess_opt.pickle", "rb")
+    file_y_1 = open("skill_digital_language_ess_opt_1.pickle", "rb")
     opt_ess = pickle.load(file_y_1)
+    #print(opt_ess)
     print("loaded file taxonomy")
 
     dict_scores = {}
 
     for job_key in dict_jobs_results:
-        score = compute_score(opt_ess, resume_results[0], dict_jobs_results[job_key][0], resume_results[1], dict_jobs_results[job_key][1])
+        print("YYYYYYYYYYYYYYYYYYYYYYY", dict_jobs_results[job_key][1])
+        print(1, dict_jobs_results[job_key][1][0])
+        print(2, dict_jobs_results[job_key][1][1])
+        score = compute_score(opt_ess, resume_results[0], dict_jobs_results[job_key][0], resume_results[1], dict_jobs_results[job_key][1][0], dict_jobs_results[job_key][1][1])
         dict_scores[job_key] = score
 
     #dict_sorted_scores = dict(sorted(dict_scores.items(), key=lambda item: item[1]))
@@ -70,12 +77,13 @@ def match_resume_job(dict_jobs_results, resume_results):
 # todo replace with real values
 # todo we do not use education here, if we wwannt e have to add it
 
-dict_jobs_entities_title = {'1': (["configuration and design skills", "python", "java", "machine learning", "data analytics"], "data scientist"), "2": (["communication", "english", "logic", "python", "public speaking"], "data manager")} # each key is a different job proposal, each value is a tuple with one list of entities and the job title
-list_resume_entities = ["java", "python", "english speaking", "project presentation", "data analytics"]  # list of entities for resume from entities extr
-resume_title = "data scientis" # resume title
+dict_jobs_entities_title = {'1': (["configuration and design skills", "python", "java", "machine learning", "data analytics", "manage artistic career"], "digital games devel"), "2": (["communication", "english", "logic", "python", "public speaking"], "data manager")} # each key is a different job proposal, each value is a tuple with one list of entities and the job title
+list_resume_entities = ["evaluate information", "computer programming", "java", "python", "english speaking", "project presentation", "data analytics"]  # list of entities for resume from entities extr
+resume_title = "digital games devel" # resume title
 compare = ">="
-threshold = 80
+threshold = 90
 dist_type = "fuzzywuzzy"
+#digital games developer
 
 # files pickle for texonomy
 file_x1 = open("skill.pickle", "rb")
