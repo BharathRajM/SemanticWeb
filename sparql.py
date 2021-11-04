@@ -145,6 +145,68 @@ def eval_results(output, entity, compare, threshold, dist_type, taxonomy_type):
        return list(set(filter_uri)) # if needed we can use filter_results
 
 
+def eval_results_uri_occupation(output, entity, compare, threshold, dist_type):
+       '''
+       This is one variation of eval_results to match the
+       :param output:
+       :param entity:
+       :param compare:
+       :param threshold:
+       :param dist_type:
+       :return:
+       '''
+
+       results = output['results']
+       #print(results)
+
+       filter_uri_tot = []
+       filter_uri = []
+       scores = []
+
+       if compare == ">=":
+              for binding in results['bindings']:
+                     sim1 = string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type)
+                     sim2 = string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type)
+                     sim3 = string_sim(binding['hiddenLabel']['value'].lower(), entity.lower(), dist_type)
+                     if sim1 >= threshold or sim2 >= threshold or sim3 >= threshold:
+                            '''print("sim1", sim1)
+                            print("sim2", sim2)
+                            print("sim3", sim3)'''
+                            filter_uri_tot.append(binding['skill']['value'])
+                            if binding['skill']['value'] not in filter_uri:
+                                   filter_uri.append(binding['skill']['value'])
+                                   scores.append(max(sim1, sim2, sim3))
+                                   #print("scores", scores)
+       else:
+              for binding in results['bindings']:
+                     sim1 = string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type)
+                     sim2 = string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type)
+                     sim3 = string_sim(binding['hiddenLabel']['value'].lower(), entity.lower(), dist_type)
+                     if sim1 >= threshold or sim2 >= threshold or sim3 >= threshold:
+                            filter_uri_tot.append(binding['skill']['value'])
+                            if binding['skill']['value'] not in filter_uri:
+                                   filter_uri.append(binding['skill']['value'])
+                                   scores.append(min(sim1, sim2, sim3))
+
+       if len(scores) != 0:
+              max_score = max(scores)
+              print("max_score", max_score)
+              max_pos = scores.index(max_score)
+              print("max pos", max_pos)
+              filter_uri = [filter_uri[max_pos]]
+              print(filter_uri)
+
+       return filter_uri_tot, filter_uri # if needed we can use filter_results
+
+'''scores = [1,2,1,4,9,5,9]
+filter_uri = [3, 4, 5, 6, 7, 8, 9]
+max_score = max(scores)
+print("max_score", max_score)
+max_pos = scores.index(max_score)
+print("max pos", max_pos)
+list_filter_uri = filter_uri[max_pos]
+print(list_filter_uri)'''
+
 def eval_results_tot(output, list_entities, compare, threshold, dist_type, taxonomy_type): # maybe instead of list entities we have key-value(resume/job proposal: list entities)
        '''
        Given the output from the query, the list of retrieved entities, it finds the matches (uris without duplicates
@@ -167,7 +229,7 @@ def eval_results_tot(output, list_entities, compare, threshold, dist_type, taxon
        return matches # list of matches (uris)
 
 
-def compute_score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_resume, list_uri_occupations_job):
+def compute_score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_resume, list_uri_occupations_job, list_uri_occupations_job_filter):
        '''
        Given the query's output with essential and optional skills/occupations, the list of uris for resume's skills
        (output of eval_results_tot), the list of uris for job proposal's skills (output of eval_results_tot), the list
@@ -187,26 +249,40 @@ def compute_score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_pr
        score = 0
 
        # score given by if resume title and job title corresponds
+       print("list_uri_occupations_job", list_uri_occupations_job)
+       print("list_uri_occupations_resume", list_uri_occupations_resume)
        if len(set(list_uri_occupations_resume).intersection(set(list_uri_occupations_job))) != 0:
-              score += 1
+              print("plus 3")
+              score += 3
 
        # score given by entities from resume and job proposal mapping to same entities into the taxonomy
        for el in list_uri_skills_resume: # retrieved from all the 5 skills ttl files
               if el in list_uri_skills_job_proposal:
+                     print("plus 1")
                      score += 1  # if resume's skill and job proposal's map to same entity in the taxonomy
 
        set_matching = set()
        set_matching_2 = set()
        # score given by entities from resume that map to essential/optional skills for job proposal's skills
+       print("list uri", list_uri_skills_job_proposal)
        for binding in results_ess_opt['bindings']:
               for el in list_uri_skills_resume:
+                     #print("ellll", el)
                      #if len(binding['essential']['value']) >= 33 and binding['essential']['value'][0:33] == 'http://data.europa.eu/esco/skill/':
+                     '''if binding['skill']['value'] == el:
+                            print("qqqqqqqqqqq", binding['skill']['value'])
+                     if binding['essential']['value'] == "http://data.europa.eu/esco/occupation/9ebaf3f0-0be0-47b7-b2b1-b3b04130fa81":
+                            print("ddddddddd", binding['essential']['value'])'''
                      if el == binding['skill']['value'] and binding['essential']['value'] in list_uri_skills_job_proposal:
+                            print("wwwwwwwwwwwww")
                             if el not in set_matching:
+                                   print("sssssssssss", binding['skill']['value'], binding['essential']['value'])
                                    score += 0.5 # if mapped skill from resume is essential skill for a skill required by job proposal
                                    set_matching.add(el)
                      elif el == binding['skill']['value'] and binding['optional']['value'] in list_uri_skills_job_proposal:
+                            print("zzzzzzzzzzzzzzzzzzzzzzzzzz")
                             if el not in set_matching:
+                                   print("ssssssssssss1", binding['skill']['value'], binding['optional']['value'])
                                    score += 0.25 # if mapped skill from resume is optional skill for a skill required by job proposalset_matching.add(el)
                                    set_matching.add(el)
 
@@ -214,16 +290,19 @@ def compute_score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_pr
        #for binding in results_ess_opt['bindings']:
               #for el in list_uri_occupations_job:
                      #if len(binding['essential']['value']) >= 33 and binding['essential']['value'][0:38] == 'http://data.europa.eu/esco/occupation/':
-                     if el == binding['skill']['value'] and binding['essential']['value'] in list_uri_occupations_job:
+                     if el == binding['skill']['value'] and binding['essential']['value'] in list_uri_occupations_job_filter:
                             if el not in set_matching_2:
+                                   print("CIAO")
                                    score += 0.5  # if mapped skill from resume is essential skill for the job (occupation)
                                    set_matching_2.add(el)
-                     elif el == binding['skill']['value'] and binding['optional']['value'] in list_uri_occupations_job:
+                     elif el == binding['skill']['value'] and binding['optional']['value'] in list_uri_occupations_job_filter:
                             if el not in set_matching_2:
+                                   print("CIAO1", binding['skill']['value'], binding['optional']['value'])
                                    score += 0.25  # if mapped skill from resume is optional skill for the job (occupation)
                                    set_matching_2.add(el)
 
        return score
+
 
 
 
@@ -333,6 +412,16 @@ WHERE {
 }
 """
 
+z1 = """
+    PREFIX esco: <http://data.europa.eu/esco/model#>      
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+SELECT ?skill ?essential ?optional
+WHERE {  
+    ?skill esco:isEssentialSkillFor ?essential .
+    ?skill esco:isOptionalSkillFor ?optional .  
+}
+"""
+
 
 '''?skill esco:isEssentialSkillFor ?x .
     ?skill esco:isOptionalSkillFor ?y .'''
@@ -364,6 +453,13 @@ file_y_1 = open("skill_digital_language_ess_opt.pickle", "wb")
 pickle.dump(output, file_y_1)
 file_y_1.close()'''
 
+'''output = sparql_query(z1, "http://localhost:3030/ds")
+file_y_1 = open("skill_digital_language_ess_opt_1.pickle", "wb")
+pickle.dump(output, file_y_1)
+file_y_1.close()'''
+
+
+
 
 # load pickle
 
@@ -384,6 +480,10 @@ skill_digital_language = pickle.load(file_y)
 print(skill_digital_language)'''
 
 '''file_y_1 = open("skill_digital_language_ess_opt.pickle", "rb")
+opt_ess = pickle.load(file_y_1)
+print(opt_ess)'''
+
+'''file_y_1 = open("skill_digital_language_ess_opt_1.pickle", "rb")
 opt_ess = pickle.load(file_y_1)
 print(opt_ess)'''
 
