@@ -198,14 +198,6 @@ def eval_results_uri_occupation(output, entity, compare, threshold, dist_type):
 
        return filter_uri_tot, filter_uri # if needed we can use filter_results
 
-'''scores = [1,2,1,4,9,5,9]
-filter_uri = [3, 4, 5, 6, 7, 8, 9]
-max_score = max(scores)
-print("max_score", max_score)
-max_pos = scores.index(max_score)
-print("max pos", max_pos)
-list_filter_uri = filter_uri[max_pos]
-print(list_filter_uri)'''
 
 def eval_results_tot(output, list_entities, compare, threshold, dist_type, taxonomy_type): # maybe instead of list entities we have key-value(resume/job proposal: list entities)
        '''
@@ -363,7 +355,7 @@ print(jaro.jaro_winkler_metric("python programming", "programmer"))'''
 
 
 # query esco_occupation.ttl or esco_skill.ttl
-
+'''
 x = """
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#> 
 PREFIX esco: <http://ec.europa.eu/esco/model#>      
@@ -422,9 +414,8 @@ WHERE {
 }
 """
 
+'''
 
-'''?skill esco:isEssentialSkillFor ?x .
-    ?skill esco:isOptionalSkillFor ?y .'''
 
 # get output -> into pickle
 
@@ -510,69 +501,3 @@ print(len(res1))'''
 
 
 
-
-
-
-# Other stuff
-
-'''response = requests.post('http://localhost:3030/ds',
-       data={'query': 'ASK { ?s ?p ?o . }'})
-print(response)
-print(response.json())'''
-
-'''from SPARQLWrapper import SPARQLWrapper, JSON, XML
-#import urllib.request module. Don't forget for Python 3.4 the urllib has been split into several different modules.
-import urllib.request
-
-#if the arg is empty in ProxyHandler, urllib will find itself your proxy config.
-proxy_support = urllib.request.ProxyHandler({})
-opener = urllib.request.build_opener(proxy_support)
-urllib.request.install_opener(opener)
-
-#connect to the sparql point
-sparql = SPARQLWrapper("http://localhost:3030/ds/sparql")
-#SPARQL request
-sparql.setQuery("""
-    PREFIX skos: <http://www.w3.org/2004/02/skos/core#> 
-PREFIX esco: <http://ec.europa.eu/esco/model#>      
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>   
-SELECT ?position    
-WHERE {     
-    ?s rdf:type esco:Occupation. 
-    { ?position skos:prefLabel ?label. } 
-    UNION 
-    { ?position skos:altLabel ?label. } 
-    FILTER (lcase(?label)= \"assistante scolaire\"@fr ) 
-}
-""")
-sparql.setReturnFormat(JSON)
-results = sparql.query().convert()
-
-for result in results["results"]["bindings"]:
-    print(result["o"]["value"])
-'''
-
-'''response = requests.post('http://localhost:3030/ds/sparql',
-       data={'query': 'SELECT ?subject ?predicate ?object WHERE {?subject ?predicate ?object}'})
-print(response.json())'''
-
-
-'''print(jsonLogic({"edit_distance" : ['bahama', 'banana']}))
-print(jsonLogic({"edit_distance" : ['bahama', 'de']}))
-print(jsonLogic({"edit_distance" : ['bahama', 'rear']}))
-print(jsonLogic({"some" : [["banana", "de", "rear"], { "<=" : [{"edit_distance" : [{"var" : ""}, "bahama"]}, 2]}]}))
-'''
-
-y = """
-    PREFIX skos: <http://www.w3.org/2004/02/skos/core#> 
-PREFIX esco: <http://ec.europa.eu/esco/model#>      
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>   
-SELECT ?position    
-WHERE {     
-    ?s rdf:type esco:Occupation. 
-    { ?position skos:prefLabel ?label. } 
-    UNION 
-    { ?position skos:altLabel ?label. } 
-    FILTER (lcase(?label)= \"assistante scolaire\"@fr ) 
-}
-"""
