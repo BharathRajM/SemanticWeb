@@ -74,6 +74,9 @@ def match_resume_job(dict_jobs_results, resume_results):
     return dict_sorted_scores
 
 
+
+
+
 # todo replace with real values
 # todo we do not use education here, if we wwannt e have to add it
 
@@ -81,7 +84,7 @@ dict_jobs_entities_title = {'1': (["configuration and design skills", "python", 
 list_resume_entities = ["evaluate information", "computer programming", "java", "python", "english speaking", "project presentation", "data analytics"]  # list of entities for resume from entities extr
 resume_title = "digital games devel" # resume title
 compare = ">="
-threshold = 90
+threshold = 100
 dist_type = "fuzzywuzzy"
 #digital games developer
 
