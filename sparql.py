@@ -71,6 +71,9 @@ def fuzzywuzzy(str1, str2):
 
        return fuzz.ratio(str1, str2)
 
+# TODO
+# def cosine similarity
+
 def string_sim(str1, str2, dist_type):
        '''
        Given two strings and a type of distance/similarity, it returns their similarity
@@ -90,6 +93,8 @@ def string_sim(str1, str2, dist_type):
               return jaro.jaro_winkler_metric(str1, str2)
        elif dist_type == "fuzzywuzzy":
               return fuzzywuzzy(str1, str2)
+       # todo
+       # put cosine here
 
 
 def eval_results(output, entity, compare, threshold, dist_type, taxonomy_type):
