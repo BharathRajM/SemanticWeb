@@ -80,7 +80,7 @@ def match_resume_job(dict_jobs_results, resume_results):
 # todo replace with real values
 # todo we do not use education here, if we wwannt e have to add it
 
-dict_jobs_entities_title = {'1': (["configuration and design skills", "python", "java", "machine learning", "data analytics", "manage artistic career"], "digital games devel"), "2": (["communication", "english", "logic", "python", "public speaking"], "data manager")} # each key is a different job proposal, each value is a tuple with one list of entities and the job title
+'''dict_jobs_entities_title = {'1': (["configuration and design skills", "python", "java", "machine learning", "data analytics", "manage artistic career"], "digital games devel"), "2": (["communication", "english", "logic", "python", "public speaking"], "data manager")} # each key is a different job proposal, each value is a tuple with one list of entities and the job title
 list_resume_entities = ["evaluate information", "computer programming", "java", "python", "english speaking", "project presentation", "data analytics"]  # list of entities for resume from entities extr
 resume_title = "digital games devel" # resume title
 compare = ">="
@@ -110,6 +110,12 @@ output_job_1 = output_job[0]
 output_job_2 = output_job[1]
 print("output_job_1", output_job_1)
 print("output_job_2", output_job_2)
+# pickle file to save results
+file_1 = open("output_job_sim_1.pickle", "wb")
+pickle.dump(output_job_1, file_1)
+file_2 = open("output_job_sim_2.pickle", "wb")
+pickle.dump(output_job_2, file_2)
+
 # compute mapping of resume sills and title to skills and occupations in the taxonomy
 output_resume = resume_eval(list_resume_entities, resume_title, compare, threshold_1, threshold_2, dist_type_1, dist_type_2, skill, occupation, skill_digital_language)
 print("\nResume matched")
@@ -117,6 +123,12 @@ output_resume_1 = output_resume[0]
 output_resume_2 = output_resume[1]
 print("output_resume_1", output_resume_1)
 print("output_resume_2", output_resume_2)
+# pickle file to save results
+file_3 = open("output_resume_sim_1.pickle", "wb")
+pickle.dump(output_resume_1, file_3)
+file_4 = open("output_resume_sim_2.pickle", "wb")
+pickle.dump(output_resume_2, file_4)
+
 # compute final score for each job proposal for the given resume
 #score_result = match_resume_job(output_job, output_resume)
 score_result_1 = match_resume_job(output_job_1, output_resume_1)
@@ -124,6 +136,33 @@ score_result_2 = match_resume_job(output_job_2, output_resume_2)
 print("\nScoes")
 print("score_result_1", score_result_1)
 print("score_result_2", score_result_2)
+# pickle file to save results
+file_5 = open("output_score_sim_1.pickle", "wb")
+pickle.dump(score_result_1, file_5)
+file_6 = open("output_score_sim_2.pickle", "wb")
+pickle.dump(score_result_2, file_6)'''
+
+
+# read pickle files
+file_1 = open("output_job_sim_1.pickle", 'rb')
+job_1 = pickle.load(file_1)
+file_2 = open("output_job_sim_2.pickle", 'rb')
+job_2 = pickle.load(file_2)
+file_3 = open("output_resume_sim_1.pickle", 'rb')
+resume_1 = pickle.load(file_3)
+file_4 = open("output_resume_sim_2.pickle", 'rb')
+resume_2 = pickle.load(file_4)
+file_5 = open("output_score_sim_1.pickle", 'rb')
+score_1 = pickle.load(file_5)
+file_6 = open("output_score_sim_2.pickle", 'rb')
+score_2 = pickle.load(file_6)
+print(job_1)
+print(job_2)
+print(resume_1)
+print(resume_2)
+print(score_1)
+print(score_2)
+
 
 
 # input examples
