@@ -93,7 +93,7 @@ dist_type_2 = "levenshtein"
 # files pickle for texonomy
 file_x1 = open("skill.pickle", "rb")
 skill = pickle.load(file_x1)
-print("loaded file skills taxonomy\n")
+print("l\noaded file skills taxonomy\n")
 file_x2 = open("occupation.pickle", "rb")
 occupation = pickle.load(file_x2)
 print("loaded file occupetions taxonomy\n")
