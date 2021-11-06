@@ -23,8 +23,6 @@ def job_eval(dict_jobs_entities_title, compare, threshold_1, threshold_2, dist_t
         job_matches_tot_2 = job_matches1[1] | job_matches2[1]
         #job_occupation_uris = eval_results(occupation, dict_jobs_entities_title[job][1], compare, threshold, dist_type, 1)
         job_occupation_uris = eval_results_uri_occupation_more_sim(occupation, dict_jobs_entities_title[job][1], compare, threshold_1, threshold_2, dist_type_1, dist_type_2)
-        '''print("dict_jobs_entities_title[job][1]", dict_jobs_entities_title[job][1])
-        print("job", job_occupation_uris)'''
         dict_jobs_results_1[job] = (job_matches_tot_1, (job_occupation_uris[0], job_occupation_uris[1]))
         dict_jobs_results_2[job] = (job_matches_tot_2, (job_occupation_uris[2], job_occupation_uris[3]))
 
@@ -61,14 +59,11 @@ def match_resume_job(dict_jobs_results, resume_results):
     file_y_1 = open("skill_digital_language_ess_opt_1.pickle", "rb")
     opt_ess = pickle.load(file_y_1)
     #print(opt_ess)
-    print("loaded file taxonomy")
+    print("\nloaded file taxonomy")
 
     dict_scores = {}
 
     for job_key in dict_jobs_results:
-        print("YYYYYYYYYYYYYYYYYYYYYYY", dict_jobs_results[job_key][1])
-        print(1, dict_jobs_results[job_key][1][0])
-        print(2, dict_jobs_results[job_key][1][1])
         score = compute_score(opt_ess, resume_results[0], dict_jobs_results[job_key][0], resume_results[1], dict_jobs_results[job_key][1][0], dict_jobs_results[job_key][1][1])
         dict_scores[job_key] = score
 
@@ -98,10 +93,10 @@ dist_type_2 = "levenshtein"
 # files pickle for texonomy
 file_x1 = open("skill.pickle", "rb")
 skill = pickle.load(file_x1)
-print("loaded file skills taxonomy")
+print("loaded file skills taxonomy\n")
 file_x2 = open("occupation.pickle", "rb")
 occupation = pickle.load(file_x2)
-print("loaded file occupetions taxonomy")
+print("loaded file occupetions taxonomy\n")
 file_y = open("skill_digital_language.pickle", "rb")
 skill_digital_language = pickle.load(file_y)
 print("loaded file skills, ict skills, languages taxonomy")
@@ -110,14 +105,14 @@ print("loaded file skills, ict skills, languages taxonomy")
 
 # compute mapping of job proposals sills and title to skills and occupations in the taxonomy
 output_job = job_eval(dict_jobs_entities_title, compare, threshold_1, threshold_2, dist_type_1, dist_type_2, skill, occupation, skill_digital_language)
-print("job matched")
+print("\njob matched")
 output_job_1 = output_job[0]
 output_job_2 = output_job[1]
 print("output_job_1", output_job_1)
 print("output_job_2", output_job_2)
 # compute mapping of resume sills and title to skills and occupations in the taxonomy
 output_resume = resume_eval(list_resume_entities, resume_title, compare, threshold_1, threshold_2, dist_type_1, dist_type_2, skill, occupation, skill_digital_language)
-print("resume matched")
+print("\nresume matched")
 output_resume_1 = output_resume[0]
 output_resume_2 = output_resume[1]
 print("output_resume_1", output_resume_1)
@@ -126,7 +121,7 @@ print("output_resume_2", output_resume_2)
 #score_result = match_resume_job(output_job, output_resume)
 score_result_1 = match_resume_job(output_job_1, output_resume_1)
 score_result_2 = match_resume_job(output_job_2, output_resume_2)
-print("scoes")
+print("\nscoes")
 print("score_result_1", score_result_1)
 print("score_result_2", score_result_2)
 
