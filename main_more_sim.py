@@ -93,26 +93,26 @@ dist_type_2 = "levenshtein"
 # files pickle for texonomy
 file_x1 = open("skill.pickle", "rb")
 skill = pickle.load(file_x1)
-print("\nloaded file skills taxonomy\n")
+print("\nLoaded file skills taxonomy\n")
 file_x2 = open("occupation.pickle", "rb")
 occupation = pickle.load(file_x2)
-print("loaded file occupetions taxonomy\n")
+print("Loaded file occupetions taxonomy\n")
 file_y = open("skill_digital_language.pickle", "rb")
 skill_digital_language = pickle.load(file_y)
-print("loaded file skills, ict skills, languages taxonomy")
+print("Loaded file skills, ict skills, languages taxonomy")
 
 
 
 # compute mapping of job proposals sills and title to skills and occupations in the taxonomy
 output_job = job_eval(dict_jobs_entities_title, compare, threshold_1, threshold_2, dist_type_1, dist_type_2, skill, occupation, skill_digital_language)
-print("\njob matched")
+print("\nJob matched")
 output_job_1 = output_job[0]
 output_job_2 = output_job[1]
 print("output_job_1", output_job_1)
 print("output_job_2", output_job_2)
 # compute mapping of resume sills and title to skills and occupations in the taxonomy
 output_resume = resume_eval(list_resume_entities, resume_title, compare, threshold_1, threshold_2, dist_type_1, dist_type_2, skill, occupation, skill_digital_language)
-print("\nresume matched")
+print("\nResume matched")
 output_resume_1 = output_resume[0]
 output_resume_2 = output_resume[1]
 print("output_resume_1", output_resume_1)
@@ -121,7 +121,7 @@ print("output_resume_2", output_resume_2)
 #score_result = match_resume_job(output_job, output_resume)
 score_result_1 = match_resume_job(output_job_1, output_resume_1)
 score_result_2 = match_resume_job(output_job_2, output_resume_2)
-print("\nscoes")
+print("\nScoes")
 print("score_result_1", score_result_1)
 print("score_result_2", score_result_2)
 
