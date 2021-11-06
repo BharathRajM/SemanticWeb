@@ -84,7 +84,7 @@ dict_jobs_entities_title = {'1': (["configuration and design skills", "python", 
 list_resume_entities = ["evaluate information", "computer programming", "java", "python", "english speaking", "project presentation", "data analytics"]  # list of entities for resume from entities extr
 resume_title = "digital games devel" # resume title
 compare = ">="
-threshold = 100
+threshold = 80
 dist_type = "fuzzywuzzy"
 #digital games developer
 
