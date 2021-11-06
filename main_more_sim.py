@@ -170,8 +170,23 @@ print(score_2)
 # dict_jobs_entities_title -> {"job1": (["skill1", "skill2", ...], "job_title_1"), ..., "jobn":(["skill1", "skill2", ...], "job_title_1")}
 # where skill_i is skill entity extracted from text for job proposal, while "job_title_i" is extracted from the field job_title in the csv
 
+# list_resume_skills -> ["skill1", "skill2", ...]
+# where skill_i is skill entity extracted from text for resume
+
+# resume_title -> "resume title"
+# extracted from the field resume_title in the csv
+
+
+# BUT IF WE HAVE DESIGNATION TOO ->
+
+# dict_jobs_entities_title -> {"job1": (["skill1", "skill2", ...], ["designation1", "designation2", ...],"job_title_1"), ..., "jobn":(["skill1", "skill2", ...], "job_title_1")}
+# where skill_i is skill entity extracted from text for job proposal, while "job_title_i" is extracted from the field job_title in the csv
+
 # list_resume_entities -> ["skill1", "skill2", ...]
 # where skill_i is skill entity extracted from text for resume
+
+# list_resume_deignations -> ["designation1", "designation2", ...]
+# where designation_i is designation entity extracted from text for resume
 
 # resume_title -> "resume title"
 # extracted from the field resume_title in the csv
