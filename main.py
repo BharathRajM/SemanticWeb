@@ -227,6 +227,9 @@ else:
         print("\nFuzzywuzzy, threshold 90\n", score_result_1)
         print("\n\nLevenshtein, threshold 0.9\n", score_result_2)
 
+    else:
+        print("Similarity threshold parameter must be 8 or 9!")
+
 
 
 
