@@ -57,5 +57,20 @@ Two parameters can be set:
 * `-sim_threshold` can have value:
   * 8 if we want the lower thresholds (0.8 and 80)
   * 9 if we want the higher thresholds (0.9 and 90)
-* `resume_num` to indicate which resume (number between 0 and 16) we want to match, here is the list of the number to insert resume titles:
-    
+* `resume_num` to indicate which resume (number between 0 and 15) we want to match, here is the list of the number to insert resume titles:
+  0) Sales Manager
+  1) Implementation Engineer
+  2) Civil Engineer
+  3) BDC Data Analyst
+  4) Safety Engineer Intern
+  5) Classified Ads Manager
+  6) Assistant Program Manager
+  7) Technical Customer Service
+  8) Data scientist
+  9) Programmer
+  10) Lawyer
+  11) Event Manager
+  12) Web developer
+  13) Mechanical Engineer
+  14) Seller
+  15) Personal Trainer
