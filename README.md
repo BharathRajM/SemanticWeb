@@ -8,6 +8,9 @@ The training data for the NER task was obtained from https://github.com/DataTurk
 The purpose of this project is, given a resumé and a set of job proposals, to find the best match for that resumé by investigating the usage of tools related to language models and semantic web.
 Two main tools are used: BERT, a language model to compute entities extraction and the ESCO taxonomy, the European job taxonomy. The first one is used to extract from plain text the entities (skills/occupations) that can be compared between the resumés and the job proposals, while the second one is used to filter them out by mapping them to the taxonomy and to help to compute the final matching score between each pair resumé-job proposal.
 
+## Datasets
+
+To run the system two datasets have been considered: one containing 16 resumes and one containing 194 among which we want to find the best atxhes for each resume.
 
 ## Structure
 
@@ -28,11 +31,13 @@ Two main files have been created to develop the mapping of the extracted entitie
 
 ### Utils
 
-Lastly, there are few additional files:
+Lastly, there are two additional files:
 
 * `csv_to_ttl_occupation.py` This file converts the csv file of the occupations into the corresponding ttl file. 
 
-* `csv_to_ttl_skill.py` This file converts the csv file of the skills into the corresponding ttl file. 
+* `csv_to_ttl_skill.py` This file converts the csv file of the skills into the corresponding ttl file
+
+Moreover, the folders `OUTPUT JOB FUZZ 80 LEVE 0.8`, `OUTPUT JOB FUZZ 90 LEVE 0.9`, `OUTPUT RESUME FUZZ LEVE 80 0.8`, `OUTPUT RESUME FUZZ LEVE 90 0.9` contains some files related to the resumes and the job proposals compute the matching scores.
   
 
 ## Execution
@@ -45,4 +50,4 @@ Lastly, there are few additional files:
 
 ### 2) Resume-job proposals matching
 
-Through the file `main.py` it is possible to indicate the resume for which we want to find the best matching job proposals. The results are computed both with _Levenshtein distance_ and _FuzzyWuzzy ratio_, it is possible to indicate if we want the lower or higher threshold (namely 0.8 or 0.9 for Levenshtein and 80 or 90 for FuzzyWuzzy).
+By running the file `main.py` it is possible to indicate the resume for which we want to find the best matching job proposals. The results are computed both with _Levenshtein distance_ and _FuzzyWuzzy ratio_, it is possible to indicate if we want the lower or higher threshold (namely 0.8 or 0.9 for Levenshtein and 80 or 90 for FuzzyWuzzy).
