@@ -37,7 +37,7 @@ Lastly, there are two additional files:
 
 * `csv_to_ttl_skill.py` This file converts the csv file of the skills into the corresponding ttl file
 
-Moreover, the folders `OUTPUT JOB FUZZ 80 LEVE 0.8`, `OUTPUT JOB FUZZ 90 LEVE 0.9`, `OUTPUT RESUME FUZZ LEVE 80 0.8`, `OUTPUT RESUME FUZZ LEVE 90 0.9` contains some files related to the resumes and the job proposals compute the matching scores.
+Moreover, the folders `OUTPUT JOB FUZZ 80 LEVE 0.8`, `OUTPUT JOB FUZZ 90 LEVE 0.9`, `OUTPUT RESUME FUZZ LEVE 80 0.8`, `OUTPUT RESUME FUZZ LEVE 90 0.9` contains some files related to the resumes and the job proposals necessary to compute the matching scores.
   
 
 ## Execution
