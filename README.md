@@ -51,3 +51,11 @@ Moreover, the folders `OUTPUT JOB FUZZ 80 LEVE 0.8`, `OUTPUT JOB FUZZ 90 LEVE 0.
 ### 2) Resume-job proposals matching
 
 By running the file `main.py` it is possible to indicate the resume for which we want to find the best matching job proposals. The results are computed both with _Levenshtein distance_ and _FuzzyWuzzy ratio_, it is possible to indicate if we want the lower or higher threshold (namely 0.8 or 0.9 for Levenshtein and 80 or 90 for FuzzyWuzzy).
+
+Two parameters can be set:
+
+* `-sim_threshold` can have value:
+  * 8 if we want the lower thresholds (0.8 and 80)
+  * 9 if we want the higher thresholds (0.9 and 90)
+* `resume_num` to indicate which resume (number between 0 and 16) we want to match, here is the list of the number to insert resume titles:
+    
