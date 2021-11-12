@@ -1,8 +1,6 @@
 # SemanticWeb
 Course project done by Bharath, Edu and Veronica as part of the coursework Semantic Web Technologies
 
-The training data for the NER task was obtained from https://github.com/DataTurks-Engg/Entity-Recognition-In-Resumes-SpaCy
-
 ## Description
 
 The purpose of this project is, given a resumé and a set of job proposals, to find the best match for that resumé by investigating the usage of tools related to language models and semantic web.
