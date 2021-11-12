@@ -5,13 +5,8 @@ import jaccard_index
 from jaccard_index.jaccard import jaccard_index
 import jaro
 from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
 import pickle
 
-
-
-# todo check similarity string
-# todo lower strings ??
 
 
 def sparql_query(query, endpoint):
@@ -71,8 +66,6 @@ def fuzzywuzzy(str1, str2):
 
        return fuzz.ratio(str1, str2)
 
-# TODO
-# def cosine similarity
 
 def string_sim(str1, str2, dist_type):
        '''
@@ -93,8 +86,6 @@ def string_sim(str1, str2, dist_type):
               return jaro.jaro_winkler_metric(str1, str2)
        elif dist_type == "fuzzywuzzy":
               return fuzzywuzzy(str1, str2)
-       # todo
-       # put cosine here
 
 
 def eval_results(output, entity, compare, threshold, dist_type, taxonomy_type):
@@ -174,33 +165,34 @@ def eval_results_more_sim(output, entity, compare, threshold_1, threshold_2, dis
        filter_results_2 = []
        filter_uri_2 = []
 
+       print("entity", entity)
+       if len(entity.split()) <= 7:
+              if taxonomy_type == 1: # files esco_occupation.ttl or esco_skill.ttl
+                     if compare == ">=":
+                            for binding in results['bindings']:
+                                   if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1 or \
+                                           string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1 or \
+                                           string_sim(binding['hiddenLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1:
+                                          filter_results_1.append(binding)
+                                          filter_uri_1.append(binding['skill']['value'])
+                                   if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2 or \
+                                           string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2 or \
+                                           string_sim(binding['hiddenLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2:
+                                          filter_results_2.append(binding)
+                                          filter_uri_2.append(binding['skill']['value'])
 
-       if taxonomy_type == 1: # files esco_occupation.ttl or esco_skill.ttl
-              if compare == ">=":
-                     for binding in results['bindings']:
-                            if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1 or \
-                                    string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1 or \
-                                    string_sim(binding['hiddenLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1:
-                                   filter_results_1.append(binding)
-                                   filter_uri_1.append(binding['skill']['value'])
-                            if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2 or \
-                                    string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2 or \
-                                    string_sim(binding['hiddenLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2:
-                                   filter_results_2.append(binding)
-                                   filter_uri_2.append(binding['skill']['value'])
 
-
-       else: # files ict_skills_collection.ttl or language_skills_collection.ttl or transversal_skills_collection.ttl
-              if compare == ">=":
-                     for binding in results['bindings']:
-                            if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1 or \
-                                    string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1:
-                                   filter_results_1.append(binding)
-                                   filter_uri_1.append(binding['skill']['value'])
-                            if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2 or \
-                                    string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2:
-                                   filter_results_2.append(binding)
-                                   filter_uri_2.append(binding['skill']['value'])
+              else: # files ict_skills_collection.ttl or language_skills_collection.ttl or transversal_skills_collection.ttl
+                     if compare == ">=":
+                            for binding in results['bindings']:
+                                   if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1 or \
+                                           string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1:
+                                          filter_results_1.append(binding)
+                                          filter_uri_1.append(binding['skill']['value'])
+                                   if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2 or \
+                                           string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2:
+                                          filter_results_2.append(binding)
+                                          filter_uri_2.append(binding['skill']['value'])
 
        return list(set(filter_uri_1)), list(set(filter_uri_2)) # if needed we can use filter_results
 
@@ -235,57 +227,61 @@ def eval_results_more_sim_designation(output, entity, compare, threshold_1, thre
        if taxonomy_type == 1: # files esco_occupation.ttl or esco_skill.ttl
               if compare == ">=":
                      for binding in results['bindings']:
-                            if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1 or \
-                                    string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1 or \
-                                    string_sim(binding['hiddenLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1:
-                                   filter_results_1.append(binding)
-                                   filter_uri_1.append(binding['skill']['value'])
-                            if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2 or \
-                                    string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2 or \
-                                    string_sim(binding['hiddenLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2:
-                                   filter_results_2.append(binding)
-                                   filter_uri_2.append(binding['skill']['value'])
+                            if len(entity.split()) <= 7:
+                                   if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1 or \
+                                           string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1 or \
+                                           string_sim(binding['hiddenLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1:
+                                          filter_results_1.append(binding)
+                                          filter_uri_1.append(binding['skill']['value'])
+                                   if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2 or \
+                                           string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2 or \
+                                           string_sim(binding['hiddenLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2:
+                                          filter_results_2.append(binding)
+                                          filter_uri_2.append(binding['skill']['value'])
 
                             for des in list_designations:
-                                   sim1_1 = string_sim(binding['prefLabel']['value'].lower(), des.lower(), dist_type_1)
-                                   sim2_1 = string_sim(binding['altLabel']['value'].lower(), des.lower(), dist_type_1)
-                                   sim3_1 = string_sim(binding['hiddenLabel']['value'].lower(), des.lower(), dist_type_1)
-                                   if sim1_1 >= threshold_1 or sim2_1 >= threshold_1 or sim3_1 >= threshold_1:
-                                          if binding['skill']['value'] not in designations_matches_1:
-                                                 designations_matches_1.append(binding['skill']['value'])
+                                   if len(des.split()) <= 7:
+                                          sim1_1 = string_sim(binding['prefLabel']['value'].lower(), des.lower(), dist_type_1)
+                                          sim2_1 = string_sim(binding['altLabel']['value'].lower(), des.lower(), dist_type_1)
+                                          sim3_1 = string_sim(binding['hiddenLabel']['value'].lower(), des.lower(), dist_type_1)
+                                          if sim1_1 >= threshold_1 or sim2_1 >= threshold_1 or sim3_1 >= threshold_1:
+                                                 if binding['skill']['value'] not in designations_matches_1:
+                                                        designations_matches_1.append(binding['skill']['value'])
 
-                                   sim1_2 = string_sim(binding['prefLabel']['value'].lower(), des.lower(), dist_type_2)
-                                   sim2_2 = string_sim(binding['altLabel']['value'].lower(), des.lower(), dist_type_2)
-                                   sim3_2 = string_sim(binding['hiddenLabel']['value'].lower(), des.lower(), dist_type_2)
-                                   if sim1_2 >= threshold_2 or sim2_2 >= threshold_2 or sim3_2 >= threshold_2:
-                                          if binding['skill']['value'] not in designations_matches_2:
-                                                 designations_matches_2.append(binding['skill']['value'])
+                                          sim1_2 = string_sim(binding['prefLabel']['value'].lower(), des.lower(), dist_type_2)
+                                          sim2_2 = string_sim(binding['altLabel']['value'].lower(), des.lower(), dist_type_2)
+                                          sim3_2 = string_sim(binding['hiddenLabel']['value'].lower(), des.lower(), dist_type_2)
+                                          if sim1_2 >= threshold_2 or sim2_2 >= threshold_2 or sim3_2 >= threshold_2:
+                                                 if binding['skill']['value'] not in designations_matches_2:
+                                                        designations_matches_2.append(binding['skill']['value'])
 
 
        else: # files ict_skills_collection.ttl or language_skills_collection.ttl or transversal_skills_collection.ttl
               if compare == ">=":
                      for binding in results['bindings']:
-                            if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1 or \
-                                    string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1:
-                                   filter_results_1.append(binding)
-                                   filter_uri_1.append(binding['skill']['value'])
-                            if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2 or \
-                                    string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2:
-                                   filter_results_2.append(binding)
-                                   filter_uri_2.append(binding['skill']['value'])
+                            if len(entity.split()) <= 7:
+                                   if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1 or \
+                                           string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_1) >= threshold_1:
+                                          filter_results_1.append(binding)
+                                          filter_uri_1.append(binding['skill']['value'])
+                                   if string_sim(binding['prefLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2 or \
+                                           string_sim(binding['altLabel']['value'].lower(), entity.lower(), dist_type_2) >= threshold_2:
+                                          filter_results_2.append(binding)
+                                          filter_uri_2.append(binding['skill']['value'])
 
                             for des in list_designations:
-                                   sim1_1 = string_sim(binding['prefLabel']['value'].lower(), des.lower(), dist_type_1)
-                                   sim2_1 = string_sim(binding['altLabel']['value'].lower(), des.lower(), dist_type_1)
-                                   if sim1_1 >= threshold_1 or sim2_1 >= threshold_1:
-                                          if binding['skill']['value'] not in designations_matches_1:
-                                                 designations_matches_1.append(binding['skill']['value'])
+                                   if len(des.split()) <= 7:
+                                          sim1_1 = string_sim(binding['prefLabel']['value'].lower(), des.lower(), dist_type_1)
+                                          sim2_1 = string_sim(binding['altLabel']['value'].lower(), des.lower(), dist_type_1)
+                                          if sim1_1 >= threshold_1 or sim2_1 >= threshold_1:
+                                                 if binding['skill']['value'] not in designations_matches_1:
+                                                        designations_matches_1.append(binding['skill']['value'])
 
-                                   sim1_2 = string_sim(binding['prefLabel']['value'].lower(), des.lower(), dist_type_2)
-                                   sim2_2 = string_sim(binding['altLabel']['value'].lower(), des.lower(), dist_type_2)
-                                   if sim1_2 >= threshold_2 or sim2_2 >= threshold_2:
-                                          if binding['skill']['value'] not in designations_matches_2:
-                                                 designations_matches_2.append(binding['skill']['value'])
+                                          sim1_2 = string_sim(binding['prefLabel']['value'].lower(), des.lower(), dist_type_2)
+                                          sim2_2 = string_sim(binding['altLabel']['value'].lower(), des.lower(), dist_type_2)
+                                          if sim1_2 >= threshold_2 or sim2_2 >= threshold_2:
+                                                 if binding['skill']['value'] not in designations_matches_2:
+                                                        designations_matches_2.append(binding['skill']['value'])
 
        return list(set(filter_uri_1)), list(set(filter_uri_2)), designations_matches_1, designations_matches_2 # if needed we can use filter_results
 
@@ -571,68 +567,13 @@ def eval_results_tot_more_sim(output, list_entities, compare, threshold_1, thres
        matches_1 = []
        matches_2 = []
        for e in list_entities:
+              print(e)
               filter_uri = eval_results_more_sim(output, e, compare, threshold_1, threshold_2, dist_type_1, dist_type_2, taxonomy_type)
               matches_1 = (set(matches_1) | set(filter_uri[0])) # set not needed bcs already sets
               matches_2 = (set(matches_2) | set(filter_uri[1]))
 
-       return matches_1, matches_2 # lists of matches (uris)
+       return set(matches_1), set(matches_2) # lists of matches (uris)
 
-
-
-def compute_score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_resume, list_uri_occupations_job, list_uri_occupations_job_filter):
-       '''
-       Given the query's output with essential and optional skills/occupations, the list of uris for resume's skills
-       (output of eval_results_tot), the list of uris for job proposal's skills (output of eval_results_tot), the list
-       of uris for job proposal's occupations (output of eval_results_tot on the type of job), it returns the final score
-       (sum of score given by the matching entities and additional score -> +0.5 if essential skill for a skill/occupation,
-       +0.25 if optional skill)
-       :param output_ess_opt:
-       :param list_uri_skills_resume:
-       :param list_uri_skills_job_proposal:
-       :param list_uri_occupations_job:
-       :return:
-       '''
-
-       # results from essential/optional skills
-       results_ess_opt = output_ess_opt['results']
-
-       score = 0
-
-       # score given by if resume title and job title corresponds
-       if len(set(list_uri_occupations_resume).intersection(set(list_uri_occupations_job))) != 0:
-              score += 3
-
-       # score given by entities from resume and job proposal mapping to same entities into the taxonomy
-       for el in list_uri_skills_resume: # retrieved from all the 5 skills ttl files
-              if el in list_uri_skills_job_proposal:
-                     score += 1  # if resume's skill and job proposal's map to same entity in the taxonomy
-
-       set_matching = set()
-       set_matching_2 = set()
-
-       # score given by entities from resume that map to essential/optional skills for job proposal's skills
-       for binding in results_ess_opt['bindings']:
-              for el in list_uri_skills_resume:
-                     if el == binding['skill']['value'] and binding['essential']['value'] in list_uri_skills_job_proposal:
-                            if el not in set_matching:
-                                   score += 0.5 # if mapped skill from resume is essential skill for a skill required by job proposal
-                                   set_matching.add(el)
-                     elif el == binding['skill']['value'] and binding['optional']['value'] in list_uri_skills_job_proposal:
-                            if el not in set_matching:
-                                   score += 0.25 # if mapped skill from resume is optional skill for a skill required by job proposalset_matching.add(el)
-                                   set_matching.add(el)
-
-       # score given by entities from resume that map to essential/optional skills for job proposal's occupation
-                     if el == binding['skill']['value'] and binding['essential']['value'] in list_uri_occupations_job_filter:
-                            if el not in set_matching_2:
-                                   score += 0.5  # if mapped skill from resume is essential skill for the job (occupation)
-                                   set_matching_2.add(el)
-                     elif el == binding['skill']['value'] and binding['optional']['value'] in list_uri_occupations_job_filter:
-                            if el not in set_matching_2:
-                                   score += 0.25  # if mapped skill from resume is optional skill for the job (occupation)
-                                   set_matching_2.add(el)
-
-       return score
 
 
 def compute_score(output_ess_opt, list_uri_skills_resume, list_uri_skills_job_proposal, list_uri_occupations_resume, list_uri_occupations_job, list_uri_occupations_job_filter):
@@ -750,6 +691,7 @@ def compute_score_des(output_ess_opt, list_uri_skills_resume, list_uri_skills_jo
                                    set_matching_2.add(el)
 
        return score
+
 
 # Example
 
