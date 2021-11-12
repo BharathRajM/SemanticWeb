@@ -2,8 +2,20 @@ from sparql import *
 import operator
 import json
 import pandas as pd
+import argparse
 
 
+parser = argparse.ArgumentParser(description='Challenge presentation example')
+parser.add_argument('-sim_threshold',
+                    type=int,
+                    default=8,
+                    help='threshold')
+parser.add_argument('-resume_num',
+                    type=int,
+                    default=0,
+                    help='resume number')
+
+args = parser.parse_args()
 
 
 def job_eval(dict_jobs_entities_title, compare, threshold_1, threshold_2, dist_type_1, dist_type_2, skill, occupation, skill_digital_language):
@@ -50,7 +62,7 @@ def job_eval_des(dict_jobs_entities_title, compare, threshold_1, threshold_2, di
     count = 0
     for job in dict_jobs_entities_title:
 
-        print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", count)
+        #print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", count)
         count += 1
         job_matches1 = eval_results_tot_more_sim(skill, dict_jobs_entities_title[job][0], compare, threshold_1, threshold_2, dist_type_1, dist_type_2, 1)
         job_matches2 = eval_results_tot_more_sim(skill_digital_language, dict_jobs_entities_title[job][0], compare, threshold_1, threshold_2, dist_type_1, dist_type_2, 2)
@@ -116,7 +128,7 @@ def match_resume_job(dict_jobs_results, resume_results):
     file_y_1 = open("skill_digital_language_ess_opt_1.pickle", "rb")
     opt_ess = pickle.load(file_y_1)
     #print(opt_ess)
-    print("\nloaded file taxonomy")
+    #print("\nloaded file taxonomy")
 
     dict_scores = {}
 
@@ -138,7 +150,7 @@ def match_resume_job_des(dict_jobs_results, resume_results):
     file_y_1 = open("skill_digital_language_ess_opt_1.pickle", "rb")
     opt_ess = pickle.load(file_y_1)
     #print(opt_ess)
-    print("\nloaded file taxonomy")
+    #print("\nloaded file taxonomy")
 
     dict_scores = {}
 
@@ -174,6 +186,46 @@ def convert_to_format(json_file, dataset, column):
         new_dict[new_key].append(df[column].values[int(key)])
 
     return new_dict
+
+
+if ( args.resume_num != 0 and args.resume_num != 1 and args.resume_num != 2 and args.resume_num != 3 and args.resume_num != 4
+        and args.resume_num != 5 and args.resume_num != 6 and args.resume_num != 7 and args.resume_num != 8 and args.resume_num != 9
+        and args.resume_num != 10 and args.resume_num != 11 and args.resume_num != 12 and args.resume_num != 13 and args.resume_num != 14
+        and args.resume_num != 15 and args.resume_num != 16):
+    print("Resume's number must be an integer between 0 and 16!")
+
+else:
+    if args.sim_threshold == 8:
+        file_1 = open("OUTPUT JOB FUZZ 80 LEVE 0.8/OUTPUT_JOB_FUZZ_80.pickle", 'rb')
+        output_job_1 = pickle.load(file_1)
+        file_2 = open("OUTPUT JOB FUZZ 80 LEVE 0.8/OUTPUT_JOB_LEVE_0.8.pickle", 'rb')
+        output_job_2 = pickle.load(file_2)
+        str1 = "OUTPUT RESUME FUZZ LEVE 80 0.8/OUTPUT_RESUME_" + str(args.sim_threshold) + "_FUZZ.pickle"
+        file_3 = open(str1, 'rb')
+        output_resume_1 = pickle.load(file_3)
+        str2 = "OUTPUT RESUME FUZZ LEVE 80 0.8/OUTPUT_RESUME_" + str(args.sim_threshold) + "_LEVE.pickle"
+        file_4 = open(str2, 'rb')
+        output_resume_2 = pickle.load(file_4)
+        score_result_1 = match_resume_job_des(output_job_1, output_resume_1)
+        score_result_2 = match_resume_job_des(output_job_2, output_resume_2)
+        print("\nFuzzywuzzy, threshold 80\n", score_result_1)
+        print("\n\nLevenshtein, threshold 0.8\n", score_result_2)
+
+    if args.sim_threshold == 9:
+        file_1 = open("OUTPUT JOB FUZZ 90 LEVE 0.9/OUTPUT_JOB_FUZZ_90.pickle", 'rb')
+        output_job_1 = pickle.load(file_1)
+        file_2 = open("OUTPUT JOB FUZZ 90 LEVE 0.9/OUTPUT_JOB_LEVE_0.9.pickle", 'rb')
+        output_job_2 = pickle.load(file_2)
+        str1 = "OUTPUT RESUME FUZZ LEVE 90 0.9/OUTPUT_RESUME_" + str(args.sim_threshold) + "_FUZZ_90.pickle"
+        file_3 = open(str1, 'rb')
+        output_resume_1 = pickle.load(file_3)
+        str2 = "OUTPUT RESUME FUZZ LEVE 90 0.9/OUTPUT_RESUME_" + str(args.sim_threshold) + "_LEVE_0.9.pickle"
+        file_4 = open(str2, 'rb')
+        output_resume_2 = pickle.load(file_4)
+        score_result_1 = match_resume_job_des(output_job_1, output_resume_1)
+        score_result_2 = match_resume_job_des(output_job_2, output_resume_2)
+        print("\nFuzzywuzzy, threshold 90\n", score_result_1)
+        print("\n\nLevenshtein, threshold 0.9\n", score_result_2)
 
 
 
@@ -251,7 +303,7 @@ pickle.dump(output_resume_2, file_4)'''
 #score_result_1 = match_resume_job(output_job_1, output_resume_1)
 #score_result_2 = match_resume_job(output_job_2, output_resume_2)
 # with designation
-file_1 = open("OUTPUT JOB FUZZ 90 LEVE 0.9/OUTPUT_JOB_FUZZ_90.pickle", 'rb')
+'''file_1 = open("OUTPUT JOB FUZZ 90 LEVE 0.9/OUTPUT_JOB_FUZZ_90.pickle", 'rb')
 output_job_1 = pickle.load(file_1)
 file_2 = open("OUTPUT JOB FUZZ 90 LEVE 0.9/OUTPUT_JOB_LEVE_0.9.pickle", 'rb')
 output_job_2 = pickle.load(file_2)
@@ -264,7 +316,7 @@ score_result_2 = match_resume_job_des(output_job_2, output_resume_2)
 print("\nResume title: Data Scientist\n")
 print("Scores\n")
 print("Fuzzywuzzy, threshold 80", score_result_1)
-print("Levenshtein, threshold 0.8", score_result_2)
+print("Levenshtein, threshold 0.8", score_result_2)'''
 
 
 
