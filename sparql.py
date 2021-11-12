@@ -1,9 +1,9 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
 import Levenshtein
-import editdistance
-import jaccard_index
-from jaccard_index.jaccard import jaccard_index
-import jaro
+#import editdistance
+#import jaccard_index
+#from jaccard_index.jaccard import jaccard_index
+#import jaro
 from fuzzywuzzy import fuzz
 import pickle
 
