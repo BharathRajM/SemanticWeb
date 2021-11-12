@@ -191,8 +191,8 @@ def convert_to_format(json_file, dataset, column):
 if ( args.resume_num != 0 and args.resume_num != 1 and args.resume_num != 2 and args.resume_num != 3 and args.resume_num != 4
         and args.resume_num != 5 and args.resume_num != 6 and args.resume_num != 7 and args.resume_num != 8 and args.resume_num != 9
         and args.resume_num != 10 and args.resume_num != 11 and args.resume_num != 12 and args.resume_num != 13 and args.resume_num != 14
-        and args.resume_num != 15 and args.resume_num != 16):
-    print("Resume's number must be an integer between 0 and 16!")
+        and args.resume_num != 15):
+    print("Resume's number must be an integer between 0 and 15!")
 
 else:
     if args.sim_threshold == 8:
