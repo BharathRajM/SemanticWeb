@@ -77,4 +77,4 @@ Two parameters can be set:
 
 Here is an example to run the code to obtain the matching job proposal for the resume 0 (Sales Manager) with lower similarity thresholds: `python main.py -sim_threshold 8 -resume_num 0`.
 
-The results are showed sorted by decreasing score, each element has its identification number, job title, scoree
+The results are showed sorted by decreasing score, each element has its identification number, job title, score
