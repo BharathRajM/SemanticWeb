@@ -75,4 +75,4 @@ Two parameters can be set:
 14. Seller
 15. Personal Trainer
 
-Here is an example to run the code to obtain the matching job proposal for the resume 0 (Sales Manager) with lower similarity thresholds: `python main.py -sim_threshold 8 -resume_num 0`
+Here is an example to run the code to obtain the matching job proposal for the resume 0 (Sales Manager) with lower similarity thresholds: `python main.py -sim_threshold 8 -resume_num 0` 
