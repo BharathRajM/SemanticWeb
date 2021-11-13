@@ -17,9 +17,9 @@ Two main tools are used: BERT, a language model to compute entities extraction a
 * `RESUME JOB MATCHING FUZZ LEVE 80 0.8` and `RESUME JOB MATCHING FUZZ LEVE 90 0.9` folders: they contain the results of the conducted experiment
 
 
-## Structure 
+## Structure   
 
-### NER
+### NER   
 
 The single jupyter-notebook _BERT\_ner.ipynb_ contains the logic to develop the language model to extract the entities and the functions to effectively extract them from our datasets.
 
@@ -76,7 +76,7 @@ Two parameters can be set:
 12. Web developer
 13. Mechanical Engineer
 14. Seller
-15. Personal Trainer
+15. Personal Trainer 
 
 Here is an example to run the code to obtain the matching job proposal for the resume 0 (Sales Manager) with lower similarity thresholds: `python main.py -sim_threshold 8 -resume_num 0`.
 
