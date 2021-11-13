@@ -15,13 +15,13 @@ Two main tools are used: BERT, a language model to compute entities extraction a
 * `ESCO ttl files` folder: it contains the ESCO taxonomy turtle files used to extract the informetion   
 
 * `RESUME JOB MATCHING FUZZ LEVE 80 0.8` and `RESUME JOB MATCHING FUZZ LEVE 90 0.9` folders: they contain the results of the conducted experiment
-
-
+      
+      
 ## Structure   
 
 ### NER   
 
-The single jupyter-notebook _BERT\_ner.ipynb_ contains the logic to develop the language model to extract the entities and the functions to effectively extract them from our datasets.
+The single jupyter-notebook _BERT\_ner.ipynb_ contains the logic to develop the language model to extract the entities and the functions to effectively extract them from our datasets.                                                  
 
 ### ESCO taxonomy
 
