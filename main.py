@@ -211,7 +211,7 @@ else:
         print("\nFuzzywuzzy, threshold 80\n", score_result_1)
         print("\n\nLevenshtein, threshold 0.8\n", score_result_2)
 
-    if args.sim_threshold == 9:
+    elif args.sim_threshold == 9:
         file_1 = open("OUTPUT JOB FUZZ 90 LEVE 0.9/OUTPUT_JOB_FUZZ_90.pickle", 'rb')
         output_job_1 = pickle.load(file_1)
         file_2 = open("OUTPUT JOB FUZZ 90 LEVE 0.9/OUTPUT_JOB_LEVE_0.9.pickle", 'rb')
