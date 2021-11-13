@@ -200,10 +200,10 @@ else:
         output_job_1 = pickle.load(file_1)
         file_2 = open("OUTPUT JOB FUZZ 80 LEVE 0.8/OUTPUT_JOB_LEVE_0.8.pickle", 'rb')
         output_job_2 = pickle.load(file_2)
-        str1 = "OUTPUT RESUME FUZZ LEVE 80 0.8/OUTPUT_RESUME_" + str(args.sim_threshold) + "_FUZZ.pickle"
+        str1 = "OUTPUT RESUME FUZZ LEVE 80 0.8/OUTPUT_RESUME_" + str(args.resume_num) + "_FUZZ.pickle"
         file_3 = open(str1, 'rb')
         output_resume_1 = pickle.load(file_3)
-        str2 = "OUTPUT RESUME FUZZ LEVE 80 0.8/OUTPUT_RESUME_" + str(args.sim_threshold) + "_LEVE.pickle"
+        str2 = "OUTPUT RESUME FUZZ LEVE 80 0.8/OUTPUT_RESUME_" + str(args.resume_num) + "_LEVE.pickle"
         file_4 = open(str2, 'rb')
         output_resume_2 = pickle.load(file_4)
         score_result_1 = match_resume_job_des(output_job_1, output_resume_1)
@@ -216,10 +216,10 @@ else:
         output_job_1 = pickle.load(file_1)
         file_2 = open("OUTPUT JOB FUZZ 90 LEVE 0.9/OUTPUT_JOB_LEVE_0.9.pickle", 'rb')
         output_job_2 = pickle.load(file_2)
-        str1 = "OUTPUT RESUME FUZZ LEVE 90 0.9/OUTPUT_RESUME_" + str(args.sim_threshold) + "_FUZZ_90.pickle"
+        str1 = "OUTPUT RESUME FUZZ LEVE 90 0.9/OUTPUT_RESUME_" + str(args.resume_num) + "_FUZZ_90.pickle"
         file_3 = open(str1, 'rb')
         output_resume_1 = pickle.load(file_3)
-        str2 = "OUTPUT RESUME FUZZ LEVE 90 0.9/OUTPUT_RESUME_" + str(args.sim_threshold) + "_LEVE_0.9.pickle"
+        str2 = "OUTPUT RESUME FUZZ LEVE 90 0.9/OUTPUT_RESUME_" + str(args.resume_num) + "_LEVE_0.9.pickle"
         file_4 = open(str2, 'rb')
         output_resume_2 = pickle.load(file_4)
         score_result_1 = match_resume_job_des(output_job_1, output_resume_1)
