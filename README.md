@@ -25,7 +25,7 @@ The single jupyter-notebook _BERT\_ner.ipynb_ contains the logic to develop the 
 
 ### ESCO taxonomy
 
-Two main files have been created to develop the mapping of the extracted entities to the ESSCO taxonomy and to compute the final matching score for each pair resume-job proposal:
+Two main files have been created to develop the mapping of the extracted entities to the ESCO taxonomy and to compute the final matching score for each pair resume-job proposal:
 
 * `sparql.py` This file contains the main functions to make the SPARQL queries, to map the extracted entities through BERT to the ESCO taxonomy by comparing them using different string similarity measures and thresholds, and to compute the final matching score for each pair resume-job proposal.
 
