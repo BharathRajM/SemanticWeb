@@ -17,7 +17,7 @@ Two main tools are used: BERT, a language model to compute entities extraction a
 * `RESUME JOB MATCHING FUZZ LEVE 80 0.8` and `RESUME JOB MATCHING FUZZ LEVE 90 0.9` folders: they contain the results of the conducted experiment
 
 
-## Structure
+## Structure 
 
 ### NER
 
