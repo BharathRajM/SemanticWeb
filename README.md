@@ -51,6 +51,7 @@ Moreover, the folders `OUTPUT JOB FUZZ 80 LEVE 0.8`, `OUTPUT JOB FUZZ 90 LEVE 0.
 2) It is recommended to create a virtual environment for the project
 3) Installation of the required libraries through the `requirements.txt` file
 
+
 ### 2) Resume-job proposals matching
 
 By running the file `main.py` it is possible to indicate the resume for which we want to find the best matching job proposals. The results are computed both with _Levenshtein distance_ and _FuzzyWuzzy ratio_, it is possible to indicate if we want the lower or higher threshold (namely 0.8 or 0.9 for Levenshtein and 80 or 90 for FuzzyWuzzy).
