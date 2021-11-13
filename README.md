@@ -1,8 +1,8 @@
-# SemanticWeb
+# SemanticWeb  
 Course project done by Bharath, Edu and Veronica as part of the coursework Semantic Web Technologies   
 
 
-## Description   
+## Description     
 
 The purpose of this project is, given a resumé and a set of job proposals, to find the best match for that resumé by investigating the usage of tools related to language models and semantic web.
 Two main tools are used: BERT, a language model to compute entities extraction and the ESCO taxonomy, the European job taxonomy. The first one is used to extract from plain text the entities (skills/occupations) that can be compared between the resumés and the job proposals, while the second one is used to filter them out by mapping them to the taxonomy and to help to compute the final matching score between each pair resume-job proposal.
@@ -80,4 +80,5 @@ Two parameters can be set:
      
 Here is an example to run the code to obtain the matching job proposal for the resume 0 (Sales Manager) with lower similarity thresholds: `python main.py -sim_threshold 8 -resume_num 0`.   
 
-The results are showed sorted by decreasing score, each element has its identification number, job title, score   
+The results are showed sorted by decreasing score, each element has its identification number, job title, score      
+      
