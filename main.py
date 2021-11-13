@@ -219,7 +219,7 @@ else:
         str1 = "OUTPUT RESUME FUZZ LEVE 90 0.9/OUTPUT_RESUME_" + str(args.resume_num) + "_FUZZ_90.pickle"
         file_3 = open(str1, 'rb')
         output_resume_1 = pickle.load(file_3)
-        str2 = "OUTPUT RESUME FUZZ LEVE 90 0.9/OUTPUT_RESUME_" + str(args.resume_num) + "_LEVE_0.9.pickle"
+        str2 = "OUTPUT RESUME FUZZ LEVE 90 0.9/OUTPUT_RESUME_" + str(args.resume_num) + "_LEVE_0.9.pickle" 
         file_4 = open(str2, 'rb')
         output_resume_2 = pickle.load(file_4)
         score_result_1 = match_resume_job_des(output_job_1, output_resume_1)
