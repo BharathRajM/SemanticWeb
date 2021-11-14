@@ -4,13 +4,13 @@ Course project done by Bharath, Edu and Veronica as part of the coursework Seman
 
 ## Description     
 
-The purpose of this project is, given a resumé and a set of job proposals, to find the best matches for that resumé by investigating the usage of tools related to language models and semantic web.
-Two main tools are used: BERT, a language model to compute entities extraction and the ESCO taxonomy, the European job taxonomy. The first one is used to extract from plain text the entities (skills/occupations) that can be compared between the resumés and the job proposals, while the second one is used to filter them out by mapping them to the taxonomy and to help to compute the final matching score between each pair resume-job proposal.
+The purpose of this project is, given a resumé and a set of job proposals, to find the best matches for that resume by investigating the usage of tools related to language models and semantic web.
+Two main tools are used: BERT, a language model to compute entities extraction and the ESCO taxonomy, the European job taxonomy. The first one is used to extract from plain text the entities (skills/occupations) that can be compared between the resumes and the job proposals, while the second one is used to filter them out by mapping them to the taxonomy and to help to compute the final matching score between each pair resume-job proposal.
                                                       
 
 ## Data
 
-* `Dataset` folder: it contains two datasets used to test the system, one containing 16 resumes and one containing 194 job proposals among which we want to find the best matches for each resume   
+* `Datasets` folder: it contains two datasets used to test the system, one containing 16 resumes and one containing 194 job proposals among which we want to find the best matches for each resume   
 
 * `ESCO ttl files` folder: it contains the ESCO taxonomy turtle files used to extract the informetion   
 
