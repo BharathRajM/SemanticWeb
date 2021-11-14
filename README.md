@@ -10,7 +10,9 @@ Two main tools are used: BERT, a language model to compute entities extraction a
 
 ## Data
 
-* `Datasets` folder: it contains two datasets used to test the system, one containing 16 resumes and one containing 194 job proposals among which we want to find the best matches for each resume   
+* `Datasets` folder: it contains two datasets used to test the system, one containing 16 resumes and one containing 194 job proposals among which we want to find the best matches for each resume
+
+* `NER data` folder: it contains the data for BERT
 
 * `ESCO ttl files` folder: it contains the ESCO taxonomy turtle files used to extract the informetion   
 
