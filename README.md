@@ -4,7 +4,7 @@ Course project done by Bharath, Edu and Veronica as part of the coursework Seman
 
 ## Description     
 
-The purpose of this project is, given a resumé and a set of job proposals, to find the best match for that resumé by investigating the usage of tools related to language models and semantic web.
+The purpose of this project is, given a resumé and a set of job proposals, to find the best matches for that resumé by investigating the usage of tools related to language models and semantic web.
 Two main tools are used: BERT, a language model to compute entities extraction and the ESCO taxonomy, the European job taxonomy. The first one is used to extract from plain text the entities (skills/occupations) that can be compared between the resumés and the job proposals, while the second one is used to filter them out by mapping them to the taxonomy and to help to compute the final matching score between each pair resume-job proposal.
                                                       
 
